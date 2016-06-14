@@ -16,6 +16,7 @@
 #define rst  8
 
 //additional pin definitions
+//hello
 const int stateButton = 2;
 
 TFT screen = TFT(cs, dc, rst);
