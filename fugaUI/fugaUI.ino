@@ -7,6 +7,7 @@
 #include <SD.h>    //SD library MUST be declared BEFORE TFT!!!!
 #include <TFT.h>  // Arduino LCD library
 #include <SPI.h>
+#include <Button.h>
 
 
 // pin definition for the MEGA
@@ -15,8 +16,10 @@
 #define dc   9
 #define rst  8
 
+#define button_pin 2
+Button button = Button(button_pin,PULLUP);
+
 //additional pin definitions
-//hello
 const int stateButton = 2;
 
 TFT screen = TFT(cs, dc, rst);
@@ -25,14 +28,23 @@ TFT screen = TFT(cs, dc, rst);
 PImage logo;
 
 //global variables
-const byte NUMBER_OF_STATES = 1; 
+const byte NUMBER_OF_STATES = 2; 
 
 //int state;    //startup() will initialise the state at the end of its function
 //bool stateToggle = false; //second condition for changing states
 
-void startup() {
-  //start screen
+//initialize states
+State Splash (&startup);
+State idle (&noopUpdate);
+State page1 (&state_1);
+State page2 (&state_2);
 
+//initialize FSM
+FSM fuga (Splash);
+
+void startup() {
+  
+  //start screen
   // initialize the display
   screen.begin();
   
@@ -67,14 +79,19 @@ void startup() {
   delay(1000);
 
   resetSettings();
+  
+  fuga.immediateTransitionTo(page1);
 
  // stateToggle = true;
  // state = 0; 
 }
 
-void noopUpdate() {}; //no operation function (do nothing)
+void noopUpdate() {
+  screen.setTextSize(2);
+  screen.text("NOOP", 70,80);
+}; //no operation function (do nothing)
 
-void state_2(){         //Start menu, NEW DRAIN and LOG
+void state_1(){         //Start menu, NEW DRAIN and LOG
   // clear the screen with white
   screen.background(255, 255, 255);
   
@@ -84,15 +101,25 @@ void state_2(){         //Start menu, NEW DRAIN and LOG
   screen.text("1", 50, 50);
 
   resetSettings();
+  
+  fuga.immediateTransitionTo(idle);
 }
 
-//initialize states
-State Splash (&startup);
-State idle (&noopUpdate);
-State start (&state_2);
+void state_2(){
 
-//initialize FSM
-FSM fuga (Splash);
+  // clear the screen with white
+  screen.background(255, 255, 255);
+  
+  drawBorder();
+
+  screen.setTextSize(3);
+  screen.text("2", 50, 50);
+
+  resetSettings();
+  
+  fuga.immediateTransitionTo(idle);
+  
+}
 
 void setup() {
   // initialize the serial port
@@ -100,9 +127,6 @@ void setup() {
   while (!Serial) {
     // wait for serial port to connect. Needed for native USB port only
   }
-
-  //initialise buttons
-  pinMode(stateButton, INPUT);
   
   // try to access the SD card. If that fails (e.g.
   // no card present), the setup process will stop.
@@ -115,30 +139,30 @@ void setup() {
 
   //startup();
   initSD();
-
-  /*
-  //draw a green rectangle with a black border
-  screen.stroke(0,0,0);
-  screen.fill(102, 188, 70);  //green fill
-  screen.rect(20,45, 123, 19);
-  
-  //test text
-  screen.stroke(0,0,0);
-  screen.setTextSize(1);
-  screen.text("---STATUS---", 43,35);
-  
-  screen.stroke(0, 0, 0);  //green
-  screen.setTextSize(2);
-  screen.text("ACCEPTABLE", 22, 47);
-  
-  //draw the image
-  screen.image(logo, 45,65);
-
- */
 }
 
-void loop() {
+void loop() { 
 
+  static byte buttonPresses = 0; //only accessible from this function, value is kept between iterations
+  
+  if (!fuga.isInState(Splash)) {
+    if (button.uniquePress()){
+      Serial.println("INSIDE");
+      //increment buttonPresses and constrain it to [0, NUMBER_OF_SELECATBLE_STATES-1]
+      buttonPresses = ++buttonPresses % (NUMBER_OF_STATES+1); 
+      Serial.println(buttonPresses);
+  	/*
+  	  manipulate the state machine by external input and control
+  	*/
+  	//CONTROL THE STATE
+      switch (buttonPresses){
+        case 0: Serial.println("IDLING"); fuga.transitionTo(idle); break;
+        case 1: fuga.transitionTo(page1); break; //first press
+        case 2: fuga.transitionTo(page2); break; //second press
+      }
+    }
+  }
+  
 /*  // read the sensor and map it to the screen height
   int sensor = analogRead(A0);
   int drawHeight = map(sensor, 0, 1023, 0, TFTscreen.height());
@@ -177,24 +201,6 @@ void state_0(){
   state += 1;
   delay(2000);
 
-}
-
-void state_2(){
-
-  // clear the screen with white
-  screen.background(255, 255, 255);
-  
-  drawBorder();
-
-  screen.setTextSize(3);
-  screen.text("2", 50, 50);
-
-  resetSettings();
-  stateToggle = false;
-
-  state += 1;
-  delay(2000);
-  
 }
 
 void state_3(){
