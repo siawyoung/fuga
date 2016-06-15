@@ -28,7 +28,7 @@ TFT screen = TFT(cs, dc, rst);
 PImage logo;
 
 //global variables
-const byte NUMBER_OF_STATES = 5; 
+const byte NUMBER_OF_STATES = 6;
 
 //int state;    //startup() will initialise the state at the end of its function
 //bool stateToggle = false; //second condition for changing states
@@ -41,6 +41,7 @@ State Page_3 (&state_3);
 State Page_4 (&state_4);
 State Page_5 (&state_5);
 State Page_6_0 (&state_6_0);
+State Page_6_3 (&state_6_3);
 
 //initialize FSM
 FSM fuga (Splash);
@@ -102,8 +103,8 @@ void state_2(){
   screen.stroke(0,0,0);
   screen.setTextSize(2);
 
-  drawBox(20, 29, 120, 30, 2);
-  drawBox(20, 69, 120, 30, 2);
+  drawBox(20, 29, 120, 30, 2); //dynamic value
+  drawBox(20, 69, 120, 30, 2); //dynamic value
 
   screen.text("NEW DRAIN", alignCenter("new drain",2), 37);
   screen.text("LOG", alignCenter("log",2), 77);
@@ -180,11 +181,11 @@ void state_5(){      //DONE
   screen.setTextSize(3);
   drawBox(alignCenter("summary",3)-2, 11, 5*3*7+3*6+4, 26, 2);
   screen.text("SUMMARY", alignCenter("summary",3), 13);
-  
+
   screen.setTextSize(1);
   screen.text("DURATION :", 13, 47);
   screen.text("VOLUME   :", 13, 70);
-  
+
   screen.stroke(255,0,0);
   screen.setTextSize(2);
   screen.text("00 00 ", 75, 44);    //dynamic value
@@ -192,13 +193,13 @@ void state_5(){      //DONE
   screen.stroke(0,0,0);
   screen.text("  h", 75, 44);
   screen.text("     m", 75, 44);
-  screen.text("    ml", 75, 65);   
-  
+  screen.text("    ml", 75, 65);
+
   screen.setTextSize(4);
   screen.stroke(255,0,0);
   drawBox(alignCenter("start",4)-2, 88, 5*4*5+4*4+4, 33, 2);
   screen.text("START", alignCenter("start",4), 90);
-  
+
   resetSettings();
   fuga.immediateTransitionTo(Idle);
 }
@@ -209,24 +210,24 @@ void state_6_0(){      //DONE
   // setup
   screen.background(255, 255, 255);
   drawBorder();
-  
+
   //text: Draining
   screen.stroke(0,0,0);
   screen.setTextSize(2);
   screen.text("DRAINING   ", alignCenter("draining   ",2), 13);
-  
+
   //text: Status
   screen.stroke(0,0,0);
   screen.setTextSize(1);
   screen.text("---STATUS---", alignCenter("---status---",1), 35);
-  
+
   //text: ACCEPTABLE
   screen.stroke(0,0,0);
   screen.fill(102, 188, 70);  //green fill
   screen.rect(alignCenter("acceptable ",2), 48, 133, 30);
   screen.setTextSize(2);
   screen.text("ACCEPTABLE", alignCenter("acceptable",2), 55);
-  
+
   //text: Time Remaining
   screen.stroke(0,0,0);
   screen.setTextSize(1);
@@ -237,7 +238,28 @@ void state_6_0(){      //DONE
   screen.text("   00 ", 75, 90);    //dynamic value
   screen.stroke(0,0,0);
   screen.text("  h  m", 75, 90);
-  
+
+  resetSettings();
+  fuga.immediateTransitionTo(Idle);
+}
+
+void state_6_3() {      // DONE
+  // setup
+  screen.background(255, 255, 255);
+  drawBorder();
+
+  screen.stroke (0,0,0);
+  screen.setTextSize(2);
+  screen.text("TIME ELAPSED", alignCenter("time elapsed",2), 13);
+
+  screen.setTextSize(5);
+  screen.text("00", 13, 64); //dynamic value
+  screen.text("00", 77, 64); //dynamic value
+
+  screen.stroke (0,255,0);
+  screen.setTextSize(2);
+  screen.text("IN PROGRESS", alignCenter("in progress",2), 90);
+
   resetSettings();
   fuga.immediateTransitionTo(Idle);
 }
@@ -280,7 +302,7 @@ void loop() {
         case 0: Serial.println("IDLING"); fuga.transitionTo(Idle); break;
         case 1: fuga.transitionTo(Page_2); break; //first press
         case 2: fuga.transitionTo(Page_3); break; //second press
-        case 3: fuga.transitionTo(Page_4); break; 
+        case 3: fuga.transitionTo(Page_4); break;
         case 4: fuga.transitionTo(Page_5); break;
         case 5: fuga.transitionTo(Page_6_0); break;
       }
@@ -344,6 +366,8 @@ int alignCenter (String text, int textSize){  //centers text in X axis
   int stringLength = text.length() * textSize*5 + ((text.length()-1)*textSize); //in pixels
   return (int) (80 - stringLength*0.5);
 }
+
+
 
 
 
