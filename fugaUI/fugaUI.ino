@@ -28,7 +28,7 @@ TFT screen = TFT(cs, dc, rst);
 PImage logo;
 
 //global variables
-const byte NUMBER_OF_STATES = 2; 
+const byte NUMBER_OF_STATES = 3; 
 
 //int state;    //startup() will initialise the state at the end of its function
 //bool stateToggle = false; //second condition for changing states
@@ -38,6 +38,7 @@ State Splash (&state_1);
 State Idle (&noop);
 State Page_2 (&state_2);
 State Page_3 (&state_3);
+State Page_4 (&state_4);
 
 //initialize FSM
 FSM fuga (Splash);
@@ -134,6 +135,34 @@ void state_3(){      //DONE
   fuga.immediateTransitionTo(Idle);
 }
 
+//Page 4: Set TARGET VOLUME
+void state_4(){      //DONE
+
+  // setup
+  screen.background(255, 255, 255);
+  drawBorder();
+
+  //title
+  screen.stroke (0,0,0);
+  screen.setTextSize(2);
+  screen.text("TARGET", alignCenter("target",2), 13);
+  screen.text("VOLUME", alignCenter("volume",2), 30);
+  drawBox(11, 62, 5*5*2 + 9, 40, 2);
+  //drawBox(88, 62, 5*5*2 + 9, 40, 2);
+  screen.setTextSize(5);
+  screen.text("00", 13, 64);
+  screen.text("00", 77, 64);
+  
+  screen.setTextSize(2);
+  screen.stroke(255,0,0);
+  screen.text("ml",135, 85);
+ 
+  resetSettings();
+  
+  fuga.immediateTransitionTo(Idle);
+  
+}
+
 void setup() {
   // initialize the serial port
   Serial.begin(9600);
@@ -172,6 +201,7 @@ void loop() {
         case 0: Serial.println("IDLING"); fuga.transitionTo(Idle); break;
         case 1: fuga.transitionTo(Page_2); break; //first press
         case 2: fuga.transitionTo(Page_3); break; //second press
+        case 3: fuga.transitionTo(Page_4); break; 
       }
     }
   }
@@ -216,23 +246,6 @@ void state_0(){
 
 }
 
-void state_4(){
-
-  // clear the screen with white
-  screen.background(255, 255, 255);
-  
-  drawBorder();
-
-  screen.setTextSize(3);
-  screen.text("4", 50, 50);
-
-  resetSettings();
-  stateToggle = false;
-
-  state += 1;
-  delay(2000);
-  
-}
 
 void state_5(){
 
