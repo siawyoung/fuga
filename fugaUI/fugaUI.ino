@@ -34,15 +34,22 @@ const byte NUMBER_OF_STATES = 2;
 //bool stateToggle = false; //second condition for changing states
 
 //initialize states
-State Splash (&startup);
-State idle (&noopUpdate);
-State page1 (&state_1);
-State page2 (&state_2);
+State Splash (&state_1);
+State Idle (&noop);
+State Page_2 (&state_2);
+State Page_3 (&state_3);
 
 //initialize FSM
 FSM fuga (Splash);
 
-void startup() {
+//Idle state 
+void noop() {    //DONE
+  screen.setTextSize(1);
+  screen.text("L",150,115);
+}; //no operation function (do nothing)
+
+//Page 1: Splash screen
+void state_1() {      //DONE
   
   //start screen
   // initialize the display
@@ -79,46 +86,52 @@ void startup() {
   delay(1000);
 
   resetSettings();
-  
-  fuga.immediateTransitionTo(page1);
+  fuga.immediateTransitionTo(Page_2);
 
- // stateToggle = true;
- // state = 0; 
 }
 
-void noopUpdate() {
-  screen.setTextSize(2);
-  screen.text("NOOP", 70,80);
-}; //no operation function (do nothing)
-
-void state_1(){         //Start menu, NEW DRAIN and LOG
-  // clear the screen with white
-  screen.background(255, 255, 255);
-  
-  drawBorder();
-
-  screen.setTextSize(3);
-  screen.text("1", 50, 50);
-
-  resetSettings();
-  
-  fuga.immediateTransitionTo(idle);
-}
-
+//Page 2: Start menu, NEW DRAIN and LOG
 void state_2(){
 
-  // clear the screen with white
+  // setup
   screen.background(255, 255, 255);
-  
   drawBorder();
 
   screen.setTextSize(3);
   screen.text("2", 50, 50);
 
   resetSettings();
+  fuga.immediateTransitionTo(Idle);
+}
+
+//Page 3: Set TARGET DURATION
+void state_3(){      //DONE
+  //setup
+  screen.background(255, 255, 255);
+  drawBorder();
+
+  //title
+  screen.stroke (0,0,0);
+  screen.setTextSize(2);
+  screen.text("TARGET", alignCenter("target",2), 13);
+  screen.text("DURATION", alignCenter("duration",2), 30);
+  drawBox(13, 62, 5*5*2 + 9, 40, 2);
+  drawBox(88, 62, 5*5*2 + 9, 40, 2);
+  screen.setTextSize(5);
+  screen.text("00", 15, 64);
+  screen.text("00", 90, 64);
   
-  fuga.immediateTransitionTo(idle);
+  screen.setTextSize(1);
+  screen.text("HH",37,113);
+  screen.text("MM",112,113);
   
+  screen.stroke(255,0,0);
+  screen.fill (255,0,0);
+  screen.rect (78, 74, 4,4);
+  screen.rect (78, 84, 4,4);
+
+  resetSettings();
+  fuga.immediateTransitionTo(Idle);
 }
 
 void setup() {
@@ -156,9 +169,9 @@ void loop() {
   	*/
   	//CONTROL THE STATE
       switch (buttonPresses){
-        case 0: Serial.println("IDLING"); fuga.transitionTo(idle); break;
-        case 1: fuga.transitionTo(page1); break; //first press
-        case 2: fuga.transitionTo(page2); break; //second press
+        case 0: Serial.println("IDLING"); fuga.transitionTo(Idle); break;
+        case 1: fuga.transitionTo(Page_2); break; //first press
+        case 2: fuga.transitionTo(Page_3); break; //second press
       }
     }
   }
@@ -203,24 +216,6 @@ void state_0(){
 
 }
 
-void state_3(){
-
-  // clear the screen with white
-  screen.background(255, 255, 255);
-  
-  drawBorder();
-
-  screen.setTextSize(3);
-  screen.text("3", 50, 50);
-
-  resetSettings();
-  stateToggle = false;
-
-  state += 1;
-  delay(2000);
-  
-}
-
 void state_4(){
 
   // clear the screen with white
@@ -259,6 +254,9 @@ void state_5(){
 
 */
 
+
+//****************---HELPER FUNCTIONS---****************
+
 void initSD(){
   logo = screen.loadImage("terry.bmp");
   if (!logo.isValid()) {
@@ -279,6 +277,25 @@ void drawBorder(){
   screen.rect(1, 1, screen.width()-2, screen.height()-2);
   screen.rect(2, 2, screen.width()-4, screen.height()-4);
   screen.rect(3, 3, screen.width()-6, screen.height()-6);
+}
+
+void drawBox(int x, int y, int width, int height, int thickness) {
+  //draw a box
+  screen.fill(255,255,255);
+  for (int i = thickness-1; i >= 0; i--){
+    screen.rect(x-i,y-i,width+2*i,height+2*i);
+  }
+}
+
+void drawBox(int x, int y, int width, int height) {
+  //draw a box
+  screen.fill(255,255,255);
+    screen.rect(x,y,width,height);
+}
+
+int alignCenter (String text, int textSize){  //centers text in X axis
+  int stringLength = text.length() * textSize*5 + ((text.length()-1)*textSize);	//in pixels
+  return (int) (80 - stringLength*0.5);
 }
 
 
