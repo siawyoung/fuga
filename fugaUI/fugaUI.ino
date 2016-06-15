@@ -28,7 +28,7 @@ TFT screen = TFT(cs, dc, rst);
 PImage logo;
 
 //global variables
-const byte NUMBER_OF_STATES = 3; 
+const byte NUMBER_OF_STATES = 5; 
 
 //int state;    //startup() will initialise the state at the end of its function
 //bool stateToggle = false; //second condition for changing states
@@ -39,6 +39,8 @@ State Idle (&noop);
 State Page_2 (&state_2);
 State Page_3 (&state_3);
 State Page_4 (&state_4);
+State Page_5 (&state_5);
+State Page_6_0 (&state_6_0);
 
 //initialize FSM
 FSM fuga (Splash);
@@ -88,7 +90,6 @@ void state_1() {      //DONE
 
   resetSettings();
   fuga.immediateTransitionTo(Page_2);
-
 }
 
 //Page 2: Start menu, NEW DRAIN and LOG
@@ -158,9 +159,82 @@ void state_4(){      //DONE
   screen.text("ml",135, 85);
  
   resetSettings();
-  
   fuga.immediateTransitionTo(Idle);
+}
+
+//Page 5: Summary menu before starting drain
+void state_5(){      //DONE
+
+// setup
+  screen.background(255, 255, 255);
+  drawBorder();
+
+  //title
+  screen.stroke (0,0,0);
+  screen.setTextSize(3);
+  drawBox(alignCenter("summary",3)-2, 11, 5*3*7+3*6+4, 26, 2);
+  screen.text("SUMMARY", alignCenter("summary",3), 13);
   
+  screen.setTextSize(1);
+  screen.text("DURATION :", 13, 47);
+  screen.text("VOLUME   :", 13, 70);
+  
+  screen.stroke(255,0,0);
+  screen.setTextSize(2);
+  screen.text("00 00 ", 75, 44);    //dynamic value
+  screen.text("0000 ", 75, 65);    //dynamic value
+  screen.stroke(0,0,0);
+  screen.text("  h", 75, 44);
+  screen.text("     m", 75, 44);
+  screen.text("    ml", 75, 65);   
+  
+  screen.setTextSize(4);
+  screen.stroke(255,0,0);
+  drawBox(alignCenter("start",4)-2, 88, 5*4*5+4*4+4, 33, 2);
+  screen.text("START", alignCenter("start",4), 90);
+  
+  resetSettings();
+  fuga.immediateTransitionTo(Idle);
+}
+
+//Page 6.0: Main Draining Page
+void state_6_0(){      //DONE
+
+  // setup
+  screen.background(255, 255, 255);
+  drawBorder();
+  
+  //text: Draining
+  screen.stroke(0,0,0);
+  screen.setTextSize(2);
+  screen.text("DRAINING   ", alignCenter("draining   ",2), 13);
+  
+  //text: Status
+  screen.stroke(0,0,0);
+  screen.setTextSize(1);
+  screen.text("---STATUS---", alignCenter("---status---",1), 35);
+  
+  //text: ACCEPTABLE
+  screen.stroke(0,0,0);
+  screen.fill(102, 188, 70);  //green fill
+  screen.rect(alignCenter("acceptable ",2), 48, 133, 30);
+  screen.setTextSize(2);
+  screen.text("ACCEPTABLE", alignCenter("acceptable",2), 55);
+  
+  //text: Time Remaining
+  screen.stroke(0,0,0);
+  screen.setTextSize(1);
+  screen.text("T. Remain:", alignCenter("acceptable ",2), 97);
+  screen.setTextSize(2);
+  screen.stroke(255,0,0);
+  screen.text("00    ", 75, 90);    //dynamic value
+  screen.text("   00 ", 75, 90);    //dynamic value
+  screen.stroke(0,0,0);
+  screen.text("  h  m", 75, 90);
+  
+  resetSettings();
+  fuga.immediateTransitionTo(Idle);
+
 }
 
 void setup() {
@@ -202,6 +276,8 @@ void loop() {
         case 1: fuga.transitionTo(Page_2); break; //first press
         case 2: fuga.transitionTo(Page_3); break; //second press
         case 3: fuga.transitionTo(Page_4); break; 
+        case 4: fuga.transitionTo(Page_5); break;
+        case 5: fuga.transitionTo(Page_6_0); break;
       }
     }
   }
@@ -244,25 +320,6 @@ void state_0(){
   state += 1;
   delay(2000);
 
-}
-
-
-void state_5(){
-
-  // clear the screen with white
-  screen.background(255, 255, 255);
-  
-  drawBorder();
-
-  screen.setTextSize(3);
-  screen.text("5", 50, 50);
-
-  resetSettings();
-  stateToggle = false;
-
-  state += 1;
-  delay(2000);
-  
 }
 
 */
