@@ -17,17 +17,27 @@ Variables will be referenced by checking the current state the device is at usin
 #define FUGAGRAPHICS_H
 
 #include <Arduino.h>
-//#include <TFT.h>		//include the graphics library for the display
+#include <FiniteStateMachine.h>
+#include <TFT.h>		//include the graphics library for the display
 
 class Page {
+
 	public:
-		Page( unsigned num_box, unsigned num_scroll );
+		//constructor
+		Page( unsigned num_box, unsigned num_scroll, TFT screen );
+
+		//functions
+		void disp_static_GFX () {
+			screen.setTextSize(4);
+			screen.text("HERE", 50,50);
+		}
 
 	private:
 		unsigned num_box;
 		unsigned num_scroll;
-};
+		TFT screen;
 
+};
 
 
 #endif
