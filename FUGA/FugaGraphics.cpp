@@ -13,8 +13,11 @@ Variables will be referenced by checking the current state the device is at usin
 */
 
 #include "FugaGraphics.h"
+#include "FiniteStateMachine.h"
+#include "TFT.h"
 
-Page::Page( unsigned num_box, unsigned num_scroll ) {
-	num_box = this.num_box;
-	num_scroll = this.num_scroll;
+Page::Page( unsigned num_box, unsigned num_scroll, TFT screen ) {
+	this.num_box = num_box;
+	this.num_scroll = num_scroll;
+	this.screen = screen;
 }
