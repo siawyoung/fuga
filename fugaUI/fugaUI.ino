@@ -1,7 +1,7 @@
 /*
 
   UI for the FUGA
-  
+
  */
 #include <FiniteStateMachine.h>
 #include <SD.h>    //SD library MUST be declared BEFORE TFT!!!!
@@ -28,7 +28,7 @@ TFT screen = TFT(cs, dc, rst);
 PImage logo;
 
 //global variables
-const byte NUMBER_OF_STATES = 3; 
+const byte NUMBER_OF_STATES = 3;
 
 //int state;    //startup() will initialise the state at the end of its function
 //bool stateToggle = false; //second condition for changing states
@@ -43,7 +43,7 @@ State Page_4 (&state_4);
 //initialize FSM
 FSM fuga (Splash);
 
-//Idle state 
+//Idle state
 void noop() {    //DONE
   screen.setTextSize(1);
   screen.text("L",150,115);
@@ -51,14 +51,14 @@ void noop() {    //DONE
 
 //Page 1: Splash screen
 void state_1() {      //DONE
-  
+
   //start screen
   // initialize the display
   screen.begin();
-  
+
   // clear the screen with white
   screen.background(255, 255, 255);
-  
+
   drawBorder();
 
   //title
@@ -98,8 +98,14 @@ void state_2(){
   screen.background(255, 255, 255);
   drawBorder();
 
-  screen.setTextSize(3);
-  screen.text("2", 50, 50);
+  screen.stroke(0,0,0);
+  screen.setTextSize(2);
+
+  drawBox(20, 29, 120, 30, 2);
+  drawBox(20, 69, 120, 30, 2);
+
+  screen.text("NEW DRAIN", alignCenter("new drain",2), 37);
+  screen.text("LOG", alignCenter("log",2), 77);
 
   resetSettings();
   fuga.immediateTransitionTo(Idle);
@@ -121,11 +127,11 @@ void state_3(){      //DONE
   screen.setTextSize(5);
   screen.text("00", 15, 64);
   screen.text("00", 90, 64);
-  
+
   screen.setTextSize(1);
   screen.text("HH",37,113);
   screen.text("MM",112,113);
-  
+
   screen.stroke(255,0,0);
   screen.fill (255,0,0);
   screen.rect (78, 74, 4,4);
@@ -152,15 +158,15 @@ void state_4(){      //DONE
   screen.setTextSize(5);
   screen.text("00", 13, 64);
   screen.text("00", 77, 64);
-  
+
   screen.setTextSize(2);
   screen.stroke(255,0,0);
   screen.text("ml",135, 85);
- 
+
   resetSettings();
-  
+
   fuga.immediateTransitionTo(Idle);
-  
+
 }
 
 void setup() {
@@ -169,7 +175,7 @@ void setup() {
   while (!Serial) {
     // wait for serial port to connect. Needed for native USB port only
   }
-  
+
   // try to access the SD card. If that fails (e.g.
   // no card present), the setup process will stop.
   Serial.print(F("Initializing SD card..."));
@@ -183,29 +189,29 @@ void setup() {
   initSD();
 }
 
-void loop() { 
+void loop() {
 
   static byte buttonPresses = 0; //only accessible from this function, value is kept between iterations
-  
+
   if (!fuga.isInState(Splash)) {
     if (button.uniquePress()){
       Serial.println("INSIDE");
       //increment buttonPresses and constrain it to [0, NUMBER_OF_SELECATBLE_STATES-1]
-      buttonPresses = ++buttonPresses % (NUMBER_OF_STATES+1); 
+      buttonPresses = ++buttonPresses % (NUMBER_OF_STATES+1);
       Serial.println(buttonPresses);
-  	/*
-  	  manipulate the state machine by external input and control
-  	*/
-  	//CONTROL THE STATE
+    /*
+      manipulate the state machine by external input and control
+    */
+    //CONTROL THE STATE
       switch (buttonPresses){
         case 0: Serial.println("IDLING"); fuga.transitionTo(Idle); break;
         case 1: fuga.transitionTo(Page_2); break; //first press
         case 2: fuga.transitionTo(Page_3); break; //second press
-        case 3: fuga.transitionTo(Page_4); break; 
+        case 3: fuga.transitionTo(Page_4); break;
       }
     }
   }
-  
+
 /*  // read the sensor and map it to the screen height
   int sensor = analogRead(A0);
   int drawHeight = map(sensor, 0, 1023, 0, TFTscreen.height());
@@ -218,17 +224,17 @@ void loop() {
 }
 
 void dyn_graphics () {
-  
+
 }
 
 
 /*
 
 void state_0(){
-  
+
   // clear the screen with white
   screen.background(255, 255, 255);
-  
+
   drawBorder();
 
   //title
@@ -251,7 +257,7 @@ void state_5(){
 
   // clear the screen with white
   screen.background(255, 255, 255);
-  
+
   drawBorder();
 
   screen.setTextSize(3);
@@ -262,7 +268,7 @@ void state_5(){
 
   state += 1;
   delay(2000);
-  
+
 }
 
 */
@@ -307,9 +313,12 @@ void drawBox(int x, int y, int width, int height) {
 }
 
 int alignCenter (String text, int textSize){  //centers text in X axis
-  int stringLength = text.length() * textSize*5 + ((text.length()-1)*textSize);	//in pixels
+  int stringLength = text.length() * textSize*5 + ((text.length()-1)*textSize); //in pixels
   return (int) (80 - stringLength*0.5);
 }
+
+
+
 
 
 
