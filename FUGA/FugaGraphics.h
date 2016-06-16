@@ -23,20 +23,14 @@ Variables will be referenced by checking the current state the device is at usin
 class Page {
 
 	public:
-		//constructor
-		Page( unsigned num_box, unsigned num_scroll, TFT screen );
+		Page( unsigned num_box, unsigned num_scroll);
 
 		//functions
-		void disp_static_GFX () {
-			screen.setTextSize(4);
-			screen.text("HERE", 50,50);
-		}
+		void disp_static_GFX();
 
 	private:
-		unsigned num_box;
-		unsigned num_scroll;
-		TFT screen;
-
+		unsigned _num_box;
+		unsigned _num_scroll;
 };
 
 
