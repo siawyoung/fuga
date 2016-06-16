@@ -19,10 +19,14 @@ State Splash (&startup);
 //initialize FSM
 FSM fuga (Splash);
 
-Page page = Page(2,3);
+Page1 page1 = Page1();
+Page2 page2 = Page2();
 
 void startup() {
-  page.disp_static_GFX();
+  page1.disp_static_GFX();
+  delay(2000);
+  page2.disp_static_GFX();
+  delay(2000);
 }
 
 
@@ -32,8 +36,10 @@ void setup() {
    while (!Serial) {
      // wait for serial port to connect. Needed for native USB port only
    }
+   page1.startScreen();
 }
 
 void loop() {
+  
   fuga.update();
 }
