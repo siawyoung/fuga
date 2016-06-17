@@ -28,12 +28,16 @@ public:
 	void drawBorder();
 	void drawBox(int x, int y, int width, int height, int thickness);
 	int alignCenter (String text, int textSize);
-	
+
+	int getCurrentBox(int numBox, int boxCount);
+	int setState();
 	//variables
 	unsigned _num_box = 0;			//# of boxes
 	unsigned _num_scroll = 0;		//# of scroll wheels	//use as boolean
 	unsigned box_count = 0;			//box accumulator
 	unsigned box_selector = 0;		//current box selected
+
+	unsigned state;					//state tracker
 
 };
 
@@ -48,6 +52,7 @@ class Page2 : public Book {
 public:
 	Page2();
 	 void disp_static_GFX();
+	 void disp_dyn_GFX();
 };
 
 class Page3 : public Book {

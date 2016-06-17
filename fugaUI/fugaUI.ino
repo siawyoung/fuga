@@ -14,6 +14,9 @@
 #define button_pin 2
 Button button = Button(button_pin,PULLUP);
 
+#define button_selector 3
+Button selector = Button(button_selector, PULLUP);
+
 // this variable represents the image to be drawn on screen
 PImage logo;
 
@@ -45,8 +48,7 @@ FSM fuga (Splash);
 
 //Idle state
 void noop() {    //DONE
-  //screen.setTextSize(1);
-  //screen.text("L",150,115);
+  //Page_2.disp_dyn_GFX();
 }; //no operation function (do nothing)
 
 //Page 1: Splash screen
@@ -59,6 +61,7 @@ void state_1() {      //DONE
 //Page 2: Start menu, NEW DRAIN and LOG
 void state_2(){    //DONE
   Page_2.disp_static_GFX();
+  Page_2.disp_dyn_GFX();
   fuga.immediateTransitionTo(Idle);
 }
 
@@ -124,6 +127,11 @@ void loop() {
         case 4: fuga.transitionTo(State_5); break;
         case 5: fuga.transitionTo(State_6_0); break; 
         case 6: fuga.transitionTo(State_6_3); break;
+      }
+    }
+    //test selector
+    if (selector.uniquePress()){
+        
       }
     }
   }

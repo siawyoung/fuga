@@ -53,6 +53,10 @@ int Book::alignCenter (String text, int textSize) {  //centers text in X axis
   return (int) (80 - stringLength*0.5);
 }
 
+int Book::getCurrentBox(int numBox, int boxCount){
+	return (boxCount % numBox);
+}
+
 //Page declarations
 //Page1
 Page1::Page1() {
@@ -114,6 +118,46 @@ void Page2::disp_static_GFX() {
   screen.text("LOG", alignCenter("log",2), 77);
 
   resetSettings();
+}
+
+void Page2::disp_dyn_GFX() {
+
+	if (getCurrentBox(this->_num_box, this->box_count == 0)) {	//NEW DRAIN selected
+		//clear previous graphics
+		screen.stroke(255,255,255);
+		screen.fill(255,255,255);
+		screen.rect(18, 67, 124, 24);
+		screen.stroke(0,0,0);
+		screen.setTextSize(2);
+		drawBox(20, 69, 120, 30, 2);
+		screen.text("LOG", alignCenter("log",2), 77);
+
+		//draw new graphics
+		screen.stroke(255,0,0);
+		screen.setTextSize(2);
+		drawBox(18, 27, 124, 34, 2);	//draw a red border
+		drawBox(20, 29, 120, 30, 2);
+		screen.text("NEW DRAIN", alignCenter("new drain",2), 37);
+		resetSettings();
+
+	} else {		//LOG selected
+		//clear previous graphics
+		screen.stroke(255,255,255);
+		screen.fill(255,255,255);
+		screen.rect(18, 27, 124, 34);
+		screen.stroke(0,0,0);
+		screen.setTextSize(2);
+		drawBox(20, 29, 120, 30, 2);
+		screen.text("NEW DRAIN", alignCenter("new drain",2), 37);
+
+		//draw new graphics
+		screen.stroke(255,0,0);
+		screen.setTextSize(2);
+		drawBox( 18, 67, 124, 34, 2);
+		drawBox(20, 69, 120, 30, 2);
+		screen.text("LOG", alignCenter("log",2), 77);
+		resetSettings();
+	}
 }
 
 //Page3
@@ -256,7 +300,6 @@ Page6_3::Page6_3() {
 }
 
 void Page6_3::disp_static_GFX() {
-  screen.begin();
   // setup
   screen.background(255, 255, 255);
   drawBorder();
