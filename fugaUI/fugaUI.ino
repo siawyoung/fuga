@@ -14,11 +14,6 @@
 #define button_pin 2
 Button button = Button(button_pin,PULLUP);
 
-#define sd_cs  4
-#define cs   53
-#define dc   9
-#define rst  8
-
 // this variable represents the image to be drawn on screen
 PImage logo;
 
@@ -105,12 +100,6 @@ void setup() {
   }
   // try to access the SD card. If that fails (e.g.
   // no card present), the setup process will stop.
-  Serial.print(F("Initializing SD card..."));
-  if (!SD.begin(sd_cs)) {
-    Serial.println(F("failed!"));
-    return;
-  }
-  Serial.println(F("OK!"));
 }
 
 void loop() {
