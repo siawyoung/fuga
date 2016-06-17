@@ -131,8 +131,7 @@ void loop() {
     }
     //test selector
     if (selector.uniquePress()){
-        
-      }
+        Page_2.down();
     }
   }
 

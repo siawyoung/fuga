@@ -101,6 +101,8 @@ void Page1::disp_static_GFX() {
 
 //Page2
 Page2::Page2() {
+  box_selector = 0;
+  num_box = 2;
 }
 
 void Page2::disp_static_GFX() {
@@ -122,7 +124,7 @@ void Page2::disp_static_GFX() {
 
 void Page2::disp_dyn_GFX() {
 
-	if (getCurrentBox(this->_num_box, this->box_count == 0)) {	//NEW DRAIN selected
+	if (box_selector == 0) {	//NEW DRAIN selected
 		//clear previous graphics
 		screen.stroke(255,255,255);
 		screen.fill(255,255,255);
@@ -160,6 +162,11 @@ void Page2::disp_dyn_GFX() {
 	}
 }
 
+void Page2::down() {
+  box_selector = (box_selector + 1) % num_box;
+  disp_dyn_GFX();
+}
+
 //Page3
 Page3::Page3() {
 }
@@ -190,6 +197,10 @@ void Page3::disp_static_GFX() {
   screen.rect (78, 84, 4,4);
 
   resetSettings();
+}
+
+void Page3::disp_dyn_GFX() {
+
 }
 
 //Page4

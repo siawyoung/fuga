@@ -32,8 +32,8 @@ public:
 	int getCurrentBox(int numBox, int boxCount);
 	int setState();
 	//variables
-	unsigned _num_box = 0;			//# of boxes
-	unsigned _num_scroll = 0;		//# of scroll wheels	//use as boolean
+	unsigned num_box = 0;			//# of boxes
+	unsigned num_scroll = 0;		//# of scroll wheels	//use as boolean
 	unsigned box_count = 0;			//box accumulator
 	unsigned box_selector = 0;		//current box selected
 
@@ -53,12 +53,15 @@ public:
 	Page2();
 	 void disp_static_GFX();
 	 void disp_dyn_GFX();
+	 void down();
+	 unsigned scroll_state;
 };
 
 class Page3 : public Book {
 public:
 	Page3();
 	void disp_static_GFX();
+	void disp_dyn_GFX();
 };
 
 class Page4 : public Book {
