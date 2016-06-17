@@ -256,6 +256,7 @@ Page6_3::Page6_3() {
 }
 
 void Page6_3::disp_static_GFX() {
+  screen.begin();
   // setup
   screen.background(255, 255, 255);
   drawBorder();
@@ -265,12 +266,16 @@ void Page6_3::disp_static_GFX() {
   screen.text("TIME ELAPSED", alignCenter("time elapsed",2), 13);
 
   screen.setTextSize(5);
-  screen.text("00", 13, 64); //dynamic value
-  screen.text("00", 77, 64); //dynamic value
+  screen.text("00", 7, 46); //dynamic value
+  screen.text("00", 82, 46); //dynamic value
+
+  screen.setTextSize(3);
+  screen.text("h", 64, 55); //dynamic value
+  screen.text("m", 139, 55); //dynamic value
 
   screen.stroke (0,255,0);
   screen.setTextSize(2);
-  screen.text("IN PROGRESS", alignCenter("in progress",2), 90);
+  screen.text("IN PROGRESS", alignCenter("in progress",2), 95);
 
   resetSettings();
 }
