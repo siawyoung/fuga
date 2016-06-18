@@ -48,7 +48,6 @@ FSM fuga (Splash);
 
 //Idle state
 void noop() {    //DONE
-  //Page_2.disp_dyn_GFX();
 }; //no operation function (do nothing)
 
 //Page 1: Splash screen
