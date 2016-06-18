@@ -53,9 +53,6 @@ int Book::alignCenter (String text, int textSize) {  //centers text in X axis
   return (int) (80 - stringLength*0.5);
 }
 
-int Book::getCurrentBox(int numBox, int boxCount){
-	return (boxCount % numBox);
-}
 
 //Page declarations
 //Page1
@@ -101,8 +98,13 @@ void Page1::disp_static_GFX() {
 
 //Page2
 Page2::Page2() {
-  box_selector = 0;
+  box_sel = 0;
   num_box = 2;
+}
+
+void Page2::next() {
+  box_sel = (box_sel + 1) % num_box;
+  disp_dyn_GFX();
 }
 
 void Page2::disp_static_GFX() {
@@ -124,11 +126,11 @@ void Page2::disp_static_GFX() {
 
 void Page2::disp_dyn_GFX() {
 
-	if (box_selector == 0) {	//NEW DRAIN selected
+	if (box_sel == 0) {	//NEW DRAIN selected
 		//clear previous graphics
 		screen.stroke(255,255,255);
 		screen.fill(255,255,255);
-		screen.rect(18, 67, 124, 24);
+		screen.rect(17, 66, 126, 36);
 		screen.stroke(0,0,0);
 		screen.setTextSize(2);
 		drawBox(20, 69, 120, 30, 2);
@@ -146,7 +148,7 @@ void Page2::disp_dyn_GFX() {
 		//clear previous graphics
 		screen.stroke(255,255,255);
 		screen.fill(255,255,255);
-		screen.rect(18, 27, 124, 34);
+		screen.rect(17, 26, 126, 36);
 		screen.stroke(0,0,0);
 		screen.setTextSize(2);
 		drawBox(20, 29, 120, 30, 2);
@@ -162,13 +164,59 @@ void Page2::disp_dyn_GFX() {
 	}
 }
 
-void Page2::down() {
-  box_selector = (box_selector + 1) % num_box;
-  disp_dyn_GFX();
-}
 
 //Page3
 Page3::Page3() {
+	box_sel = 0;
+	num_box = 4;
+	scroll_sel_0 = 0;
+	scroll_sel_1 = 0;
+	scroll_sel_2 = 0;
+	scroll_sel_3 = 0;
+}
+
+void Page3::up() {
+	switch (box_sel) {
+		case 0: 
+			scroll_sel_0 = (scroll_sel_0 + 1) % scroll_max;
+			disp_dyn_GFX(); break;
+		case 1:
+			scroll_sel_1 = (scroll_sel_1 + 1) % scroll_max;
+			disp_dyn_GFX(); break;
+		case 2:
+			scroll_sel_2 = (scroll_sel_2 + 1) % scroll_max;
+			disp_dyn_GFX(); break;
+		case 3:
+			scroll_sel_3 = (scroll_sel_3 + 1) % scroll_max;
+			disp_dyn_GFX(); break;
+	}
+}
+
+void Page3::down() {
+	switch (box_sel) {
+		case 0: 
+			scroll_sel_0 = (scroll_sel_0 - 1) % scroll_max;
+			disp_dyn_GFX(); break;
+		case 1:
+			scroll_sel_1 = (scroll_sel_1 - 1) % scroll_max;
+			disp_dyn_GFX(); break;
+		case 2:
+			scroll_sel_2 = (scroll_sel_2 - 1) % scroll_max;
+			disp_dyn_GFX(); break;
+		case 3:
+			scroll_sel_3 = (scroll_sel_3 - 1) % scroll_max;
+			disp_dyn_GFX(); break;
+	}
+}
+
+void Page3::left() {
+	box_sel = (box_sel - 1) % num_box;
+	disp_dyn_GFX();
+}
+
+void Page3::right() {
+	box_sel = (box_sel + 1) % num_box;
+	disp_dyn_GFX();
 }
 
 void Page3::disp_static_GFX() {
@@ -181,15 +229,21 @@ void Page3::disp_static_GFX() {
   screen.setTextSize(2);
   screen.text("TARGET", alignCenter("target",2), 13);
   screen.text("DURATION", alignCenter("duration",2), 30);
-  drawBox(13, 62, 5*5*2 + 9, 40, 2);
-  drawBox(88, 62, 5*5*2 + 9, 40, 2);
-  screen.setTextSize(5);
-  screen.text("00", 15, 64);
-  screen.text("00", 90, 64);
 
-  screen.setTextSize(1);
-  screen.text("HH",37,113);
-  screen.text("MM",112,113);
+  drawBox(13, 62, 5*4 + 9, 40, 2);				//dynamic value
+  drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);		//dynamic value
+  drawBox(88, 62, 5*4 + 9, 40, 2);				//dynamic value
+  drawBox(88+5*4 + 10, 62, 5*4 + 9, 40, 2);		//dynamic value
+
+  screen.setTextSize(5);
+  screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);		
+  screen.text(itoa(scroll_sel_1, buffer, 10), 45, 64);
+  screen.text(itoa(scroll_sel_2, buffer, 10), 90, 64);
+  screen.text(itoa(scroll_sel_3, buffer, 10), 120, 64);
+
+  screen.setTextSize(2);
+  screen.text("HH",32,106);
+  screen.text("MM",107,106);
 
   screen.stroke(255,0,0);
   screen.fill (255,0,0);
@@ -200,7 +254,118 @@ void Page3::disp_static_GFX() {
 }
 
 void Page3::disp_dyn_GFX() {
+	if (box_sel == 0) {
+		//clear
+		screen.stroke(255,255,255);
+		screen.fill(255,255,255);
+		screen.rect(7, 47, 148, 12);
+		screen.stroke (0,0,0);
+		drawBox(13, 62, 5*4 + 9, 40, 2);				
+		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);		
+		drawBox(88, 62, 5*4 + 9, 40, 2);				
+		drawBox(88+5*4 + 10, 62, 5*4 + 9, 40, 2);		
+		screen.setTextSize(5);
+		screen.stroke(0,0,0);
+		screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);		
+		screen.text(itoa(scroll_sel_1, buffer, 10), 45, 64);
+		screen.text(itoa(scroll_sel_2, buffer, 10), 90, 64);
+		screen.text(itoa(scroll_sel_3, buffer, 10), 120, 64);
 
+		screen.stroke (0,0,0);
+		screen.fill(255,0,0);
+		screen.circle (27,53, 4);
+		//draw number
+		screen.stroke(255,0,0);
+		drawBox(13, 62, 5*4 + 9, 40, 2);
+		screen.setTextSize(5);
+		screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);
+
+		resetSettings();
+
+	} else if (box_sel == 1) {
+		//clear
+		screen.stroke(255,255,255);
+		screen.fill(255,255,255);
+		screen.rect(7, 47, 148, 12);
+		screen.stroke (0,0,0);
+		drawBox(13, 62, 5*4 + 9, 40, 2);				
+		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);		
+		drawBox(88, 62, 5*4 + 9, 40, 2);				
+		drawBox(88+5*4 + 10, 62, 5*4 + 9, 40, 2);		
+		screen.setTextSize(5);
+		screen.stroke(0,0,0);
+		screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);		
+		screen.text(itoa(scroll_sel_1, buffer, 10), 45, 64);
+		screen.text(itoa(scroll_sel_2, buffer, 10), 90, 64);
+		screen.text(itoa(scroll_sel_3, buffer, 10), 120, 64);
+
+		screen.stroke (0,0,0);
+		screen.fill(255,0,0);
+		screen.circle (13+5*4 + 10 +14, 53, 4);
+		//draw number
+		screen.stroke(255,0,0);
+		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);
+		screen.setTextSize(5);
+		screen.text(itoa(scroll_sel_1, buffer, 10), 45, 64);
+
+		resetSettings();
+
+	} else if (box_sel == 2) {
+		//clear
+		screen.stroke(255,255,255);
+		screen.fill(255,255,255);
+		screen.rect(7, 47, 148, 12);
+		screen.stroke (0,0,0);
+		drawBox(13, 62, 5*4 + 9, 40, 2);				
+		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);		
+		drawBox(88, 62, 5*4 + 9, 40, 2);				
+		drawBox(88+5*4 + 10, 62, 5*4 + 9, 40, 2);		
+		screen.setTextSize(5);
+		screen.stroke(0,0,0);
+		screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);		
+		screen.text(itoa(scroll_sel_1, buffer, 10), 45, 64);
+		screen.text(itoa(scroll_sel_2, buffer, 10), 90, 64);
+		screen.text(itoa(scroll_sel_3, buffer, 10), 120, 64);
+
+		screen.stroke (0,0,0);
+		screen.fill(255,0,0);
+		screen.circle (88 + 14, 53, 4);
+		//draw number
+		screen.stroke(255,0,0);
+		drawBox(88, 62, 5*4 + 9, 40, 2);
+		screen.setTextSize(5);
+		screen.text(itoa(scroll_sel_2, buffer, 10), 90, 64);
+
+		resetSettings();
+
+	} else if (box_sel == 3) {
+		//clear
+		screen.stroke(255,255,255);
+		screen.fill(255,255,255);
+		screen.rect(7, 47, 148, 12);
+		screen.stroke (0,0,0);
+		drawBox(13, 62, 5*4 + 9, 40, 2);				
+		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);		
+		drawBox(88, 62, 5*4 + 9, 40, 2);				
+		drawBox(88+5*4 + 10, 62, 5*4 + 9, 40, 2);		
+		screen.setTextSize(5);
+		screen.stroke(0,0,0);
+		screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);		
+		screen.text(itoa(scroll_sel_1, buffer, 10), 45, 64);
+		screen.text(itoa(scroll_sel_2, buffer, 10), 90, 64);
+		screen.text(itoa(scroll_sel_3, buffer, 10), 120, 64);
+
+		screen.stroke (0,0,0);
+		screen.fill(255,0,0);
+		screen.circle (88+5*4 + 10 + 14, 53, 4);
+		//draw number
+		screen.stroke(255,0,0);
+		drawBox(88+5*4 + 10, 62, 5*4 + 9, 40, 2);
+		screen.setTextSize(5);
+		screen.text(itoa(scroll_sel_3, buffer, 10), 120, 64);
+
+		resetSettings();
+	}
 }
 
 //Page4

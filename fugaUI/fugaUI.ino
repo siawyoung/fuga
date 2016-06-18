@@ -53,8 +53,9 @@ void noop() {    //DONE
 //Page 1: Splash screen
 void state_1() {      //DONE
   Page_Splash.startScreen();
-  Page_Splash.disp_static_GFX();
-  fuga.immediateTransitionTo(State_2); 
+  fuga.immediateTransitionTo(State_3);      //testing state 3
+  //Page_Splash.disp_static_GFX();
+  //fuga.immediateTransitionTo(State_2); 
 }
 
 //Page 2: Start menu, NEW DRAIN and LOG
@@ -67,6 +68,7 @@ void state_2(){    //DONE
 //Page 3: Set TARGET DURATION
 void state_3(){      //DONE
   Page_3.disp_static_GFX();
+  Page_3.disp_dyn_GFX();
   fuga.immediateTransitionTo(Idle);
 }
 
@@ -105,18 +107,16 @@ void setup() {
 }
 
 void loop() {
-
+/*
   static byte buttonPresses = 0; //only accessible from this function, value is kept between iterations
 
   if (!fuga.isInState(Splash)) {
     if (button.uniquePress()){
-      Serial.println("INSIDE");
       //increment buttonPresses and constrain it to [0, NUMBER_OF_SELECATBLE_STATES-1]
       buttonPresses = ++buttonPresses % (NUMBER_OF_STATES+1);
-      Serial.println(buttonPresses);
-    /*
+    
       manipulate the state machine by external input and control
-    */
+    
     //CONTROL THE STATE
       switch (buttonPresses){
         case 0: fuga.transitionTo(Idle); break;
@@ -130,10 +130,20 @@ void loop() {
     }
     //test selector
     if (selector.uniquePress()){
-        Page_2.down();
+        Page_2.next();
     }
   }
+  
+*/
 
+  if (!fuga.isInState(Splash)) {
+    if (button.uniquePress()){
+        Page_3.up();
+    }
+    if (selector.uniquePress()){
+        Page_3.right();
+    }
+  }
 /*  // read the sensor and map it to the screen height
   int sensor = analogRead(A0);
   int drawHeight = map(sensor, 0, 1023, 0, TFTscreen.height());

@@ -29,13 +29,19 @@ public:
 	void drawBox(int x, int y, int width, int height, int thickness);
 	int alignCenter (String text, int textSize);
 
-	int getCurrentBox(int numBox, int boxCount);
 	int setState();
+
 	//variables
 	unsigned num_box = 0;			//# of boxes
 	unsigned num_scroll = 0;		//# of scroll wheels	//use as boolean
-	unsigned box_count = 0;			//box accumulator
-	unsigned box_selector = 0;		//current box selected
+	unsigned box_sel = 0;		//current box selected
+	unsigned scroll_sel_0 = 0;	//scroll value per scroll wheel
+	unsigned scroll_sel_1 = 0;
+	unsigned scroll_sel_2 = 0;
+	unsigned scroll_sel_3 = 0;
+	const unsigned scroll_max = 10;		//max single digit for scrolling (0 to 9)
+
+	char buffer [10];				//buffer for int to String conversion
 
 	unsigned state;					//state tracker
 
@@ -53,8 +59,7 @@ public:
 	Page2();
 	 void disp_static_GFX();
 	 void disp_dyn_GFX();
-	 void down();
-	 unsigned scroll_state;
+	 void next();
 };
 
 class Page3 : public Book {
@@ -62,6 +67,10 @@ public:
 	Page3();
 	void disp_static_GFX();
 	void disp_dyn_GFX();
+	void up();
+	void down();
+	void left();
+	void right();
 };
 
 class Page4 : public Book {
