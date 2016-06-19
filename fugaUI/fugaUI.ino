@@ -53,7 +53,7 @@ void noop() {    //DONE
 //Page 1: Splash screen
 void state_1() {      //DONE
   Page_Splash.startScreen();
-  fuga.immediateTransitionTo(State_6_3);      //testing state 6_3
+  fuga.immediateTransitionTo(State_6_0);      //testing state 6_3
   //Page_Splash.disp_static_GFX();
   //fuga.immediateTransitionTo(State_2); 
 }

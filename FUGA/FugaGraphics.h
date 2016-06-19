@@ -28,6 +28,7 @@ public:
 	void drawBorder();
 	void drawBox(int x, int y, int width, int height, int thickness);
 	int alignCenter (String text, int textSize);
+	void formatTime (unsigned long startTime, unsigned long currentTime);
 
 	int setState();
 
@@ -40,6 +41,10 @@ public:
 	unsigned scroll_sel_2 = 0;
 	unsigned scroll_sel_3 = 0;
 	const unsigned scroll_max = 10;		//max single digit for scrolling (0 to 9)
+
+	unsigned long startTime = 0;
+	unsigned long hours = 0;
+	unsigned long minutes = 0;
 
 	char buffer [5];				//buffer for int to String conversion
 

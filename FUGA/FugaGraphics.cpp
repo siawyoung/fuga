@@ -25,6 +25,12 @@ TFT screen = TFT(cs, dc, rst);
 
 //public helper functions
 
+void Book::formatTime(unsigned long startTime, unsigned long currentTime) {
+	minutes = ((currentTime - startTime)/1000) / 60;
+	hours = minutes / 60;
+	minutes = minutes - (hours * 60);
+}
+
 void Book::resetSettings(){
   screen.fill(0,0,0);
   screen.setTextSize(1);
@@ -574,7 +580,7 @@ void Page6_0::disp_dyn_GFX() {
 
 		resetSettings();
 	} else {
-
+		//clear
 		screen.stroke(255,255,255);
 		screen.fill(255,255,255);
 		screen.rect(alignCenter("terminate?  ",2), 40, 142, 47);
@@ -609,12 +615,19 @@ void Page6_3::disp_static_GFX() {
   screen.text("TIME ELAPSED", alignCenter("time elapsed",2), 13);
 
   screen.setTextSize(5);
-  screen.text("00", 7, 46); //dynamic value
-  screen.text("00", 82, 46); //dynamic value
+  if (hours < 10) {
+	  screen.text("0", 7, 46);
+	  screen.text(itoa(hours, buffer, 10), 37, 46); //dynamic value
+  } else { screen.text(itoa(hours, buffer, 10), 7, 46); }
+
+  if (minutes < 10) {
+	  screen.text("0", 82, 46);
+	  screen.text(itoa(minutes, buffer, 10), 112, 46); //dynamic value
+  } else { screen.text(itoa(minutes, buffer, 10), 82, 46); }
 
   screen.setTextSize(3);
-  screen.text("h", 64, 55); //dynamic value
-  screen.text("m", 139, 55); //dynamic value
+  screen.text("h", 64, 55); 
+  screen.text("m", 139, 55); 
 
   screen.stroke (0,255,0);
   screen.setTextSize(2);
