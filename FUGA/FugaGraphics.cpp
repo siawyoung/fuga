@@ -370,6 +370,42 @@ void Page3::disp_dyn_GFX() {
 
 //Page4
 Page4::Page4() {
+	box_sel = 1;
+	num_box = 2;
+	scroll_sel_0 = 0;
+	scroll_sel_1 = 0;
+}
+
+void Page4::up() {
+	switch (box_sel) {
+		case 0: 
+			scroll_sel_0 = (scroll_sel_0 + 1) % scroll_max;
+			disp_dyn_GFX(); break;
+		case 1:
+			scroll_sel_1 = (scroll_sel_1 + 1) % scroll_max;
+			disp_dyn_GFX(); break;
+	}
+}
+
+void Page4::down() {
+	switch (box_sel) {
+		case 0: 
+			scroll_sel_0 = (scroll_sel_0 - 1) % scroll_max;
+			disp_dyn_GFX(); break;
+		case 1:
+			scroll_sel_1 = (scroll_sel_1 - 1) % scroll_max;
+			disp_dyn_GFX(); break;
+	}
+}
+
+void Page4::left() {
+	box_sel = (box_sel - 1) % num_box;
+	disp_dyn_GFX();
+}
+
+void Page4::right() {
+	box_sel = (box_sel + 1) % num_box;
+	disp_dyn_GFX();
 }
 
 void Page4::disp_static_GFX() {
@@ -382,10 +418,11 @@ void Page4::disp_static_GFX() {
   screen.setTextSize(2);
   screen.text("TARGET", alignCenter("target",2), 13);
   screen.text("VOLUME", alignCenter("volume",2), 30);
-  drawBox(11, 62, 5*5*2 + 9, 40, 2);
-  //drawBox(88, 62, 5*5*2 + 9, 40, 2);
+  drawBox(11, 62, 5*4 + 9, 40, 2);
+  drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);				
   screen.setTextSize(5);
-  screen.text("00", 13, 64);
+  screen.text(itoa(scroll_sel_0, buffer, 10), 13, 64);					//dynamic value
+  screen.text(itoa(scroll_sel_1, buffer, 10), 13+5*4 + 12, 64);			//dynamic value
   screen.text("00", 77, 64);
 
   screen.setTextSize(2);
@@ -393,6 +430,55 @@ void Page4::disp_static_GFX() {
   screen.text("ml",135, 85);
 
   resetSettings();
+}
+
+void Page4::disp_dyn_GFX() {
+	if (box_sel == 0) {
+		//clear
+		screen.stroke(255,255,255);
+		screen.fill(255,255,255);
+		screen.rect(7, 47, 148, 12);
+		screen.stroke (0,0,0);
+		drawBox(11, 62, 5*4 + 9, 40, 2);
+		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);				
+		screen.setTextSize(5);
+		screen.text(itoa(scroll_sel_0, buffer, 10), 13, 64);					
+		screen.text(itoa(scroll_sel_1, buffer, 10), 13+5*4 + 12, 64);	
+
+		screen.stroke (0,0,0);
+		screen.fill(255,0,0);
+		screen.circle (25,53, 4);
+		//draw number
+		screen.stroke(255,0,0);
+		drawBox(11, 62, 5*4 + 9, 40, 2);
+		screen.setTextSize(5);
+		screen.text(itoa(scroll_sel_0, buffer, 10), 13, 64);
+
+		resetSettings();
+
+	} else if (box_sel == 1) {
+		//clear
+		screen.stroke(255,255,255);
+		screen.fill(255,255,255);
+		screen.rect(7, 47, 148, 12);
+		screen.stroke (0,0,0);
+		drawBox(11, 62, 5*4 + 9, 40, 2);
+		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);				
+		screen.setTextSize(5);
+		screen.text(itoa(scroll_sel_0, buffer, 10), 13, 64);					
+		screen.text(itoa(scroll_sel_1, buffer, 10), 13+5*4 + 12, 64);	
+
+		screen.stroke (0,0,0);
+		screen.fill(255,0,0);
+		screen.circle (13+5*4 + 10 +14, 53, 4);
+		//draw number
+		screen.stroke(255,0,0);
+		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);	
+		screen.setTextSize(5);
+		screen.text(itoa(scroll_sel_1, buffer, 10), 13+5*4 + 12, 64);
+
+		resetSettings();
+	}
 }
 
 //Page5
@@ -433,6 +519,13 @@ void Page5::disp_static_GFX() {
 
 //Page6_0
 Page6_0::Page6_0() {
+	box_sel = 0;
+	num_box = 2;
+}
+
+void Page6_0::back() {
+	box_sel = (box_sel + 1) % num_box;
+	disp_dyn_GFX();
 }
 
 void Page6_0::disp_static_GFX() {
@@ -443,7 +536,7 @@ void Page6_0::disp_static_GFX() {
   //text: Draining
   screen.stroke(0,0,0);
   screen.setTextSize(2);
-  screen.text("DRAINING   ", alignCenter("draining   ",2), 13);
+  screen.text("<DRAINING>", alignCenter("<DRAINING>",2), 13);
 
   //text: Status
   screen.stroke(0,0,0);
@@ -469,6 +562,37 @@ void Page6_0::disp_static_GFX() {
   screen.text("  h  m", 75, 90);
 
   resetSettings();
+}
+
+void Page6_0::disp_dyn_GFX() {
+	if (box_sel == 1) {
+		screen.stroke(0,0,0);
+		screen.fill(255,0,0);
+		screen.rect(alignCenter("terminate?  ",2), 40, 142, 47);
+		screen.setTextSize(2);
+		screen.text("TERMINATE?", alignCenter("terminate?", 2), 55);
+
+		resetSettings();
+	} else {
+
+		screen.stroke(255,255,255);
+		screen.fill(255,255,255);
+		screen.rect(alignCenter("terminate?  ",2), 40, 142, 47);
+
+		//text: Status
+		screen.stroke(0,0,0);
+		screen.setTextSize(1);
+		screen.text("---STATUS---", alignCenter("---status---",1), 35);
+
+		//text: ACCEPTABLE
+		screen.stroke(0,0,0);
+		screen.fill(102, 188, 70);  //green fill
+		screen.rect(alignCenter("acceptable ",2), 48, 133, 30);
+		screen.setTextSize(2);
+		screen.text("ACCEPTABLE", alignCenter("acceptable",2), 55);
+
+		resetSettings();
+	}
 }
 
 //Page6_3

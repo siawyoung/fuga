@@ -53,7 +53,7 @@ void noop() {    //DONE
 //Page 1: Splash screen
 void state_1() {      //DONE
   Page_Splash.startScreen();
-  fuga.immediateTransitionTo(State_3);      //testing state 3
+  fuga.immediateTransitionTo(State_6_3);      //testing state 6_3
   //Page_Splash.disp_static_GFX();
   //fuga.immediateTransitionTo(State_2); 
 }
@@ -75,6 +75,7 @@ void state_3(){      //DONE
 //Page 4: Set TARGET VOLUME
 void state_4(){      //DONE
   Page_4.disp_static_GFX();
+  Page_4.disp_dyn_GFX();
   fuga.immediateTransitionTo(Idle);
 }
 
@@ -87,6 +88,7 @@ void state_5(){      //DONE
 //Page 6.0: Main Draining Page
 void state_6_0(){      //DONE
   Page_6_0.disp_static_GFX();
+  Page_6_0.disp_dyn_GFX();
   fuga.immediateTransitionTo(Idle);
 }
 
@@ -138,10 +140,10 @@ void loop() {
 
   if (!fuga.isInState(Splash)) {
     if (button.uniquePress()){
-        Page_3.up();
+      //Page_6_0.back();
     }
     if (selector.uniquePress()){
-        Page_3.right();
+      //Page_4.right();
     }
   }
 /*  // read the sensor and map it to the screen height

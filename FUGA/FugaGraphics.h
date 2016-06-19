@@ -41,7 +41,7 @@ public:
 	unsigned scroll_sel_3 = 0;
 	const unsigned scroll_max = 10;		//max single digit for scrolling (0 to 9)
 
-	char buffer [10];				//buffer for int to String conversion
+	char buffer [5];				//buffer for int to String conversion
 
 	unsigned state;					//state tracker
 
@@ -77,6 +77,11 @@ class Page4 : public Book {
 public:
 	Page4();
 	void disp_static_GFX();
+	void disp_dyn_GFX();
+	void up();
+	void down();
+	void left();
+	void right();
 };
 
 class Page5 : public Book {
@@ -89,6 +94,8 @@ class Page6_0 : public Book {
 public:
 	Page6_0();
 	void disp_static_GFX();
+	void disp_dyn_GFX(); 
+	void back();
 };
 
 class Page6_3 : public Book {
