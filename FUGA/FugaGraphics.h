@@ -1,4 +1,4 @@
-/* 
+/*
 
 FUGA Graphics Library implementation
 This library stores all the information required for graphics in each of the pages of the UI
@@ -48,7 +48,7 @@ public:
 
 	char buffer [5];				//buffer for int to String conversion
 
-	unsigned state;					//state tracker
+	static int pageState;					//state tracker
 
 };
 
@@ -64,7 +64,10 @@ public:
 	Page2();
 	 void disp_static_GFX();
 	 void disp_dyn_GFX();
-	 void next();
+	 void up();
+	 void down();
+	 void left();
+	 void right();
 };
 
 class Page3 : public Book {
@@ -95,17 +98,17 @@ public:
 	void disp_static_GFX();
 };
 
-class Page6_0 : public Book {
+class Page6 : public Book {
 public:
-	Page6_0();
+	Page6();
 	void disp_static_GFX();
-	void disp_dyn_GFX(); 
+	void disp_dyn_GFX();
 	void back();
 };
 
-class Page6_3 : public Book {
+class Page7 : public Book {
 public:
-	Page6_3();
+	Page7();
 	void disp_static_GFX();
 };
 

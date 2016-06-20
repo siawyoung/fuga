@@ -25,6 +25,8 @@ Variables will be referenced by checking the current state the device is at usin
 
 TFT screen = TFT(cs, dc, rst);
 
+int Book::pageState = 1;
+
 //public helper functions
 
 void Book::updateTime(unsigned long startTime, unsigned long currentTime) {
@@ -72,6 +74,9 @@ void Page1::startScreen() {			//start up function to start screen
 }
 void Page1::disp_static_GFX() {
   // clear the screen with white
+
+  Book::pageState = 1;
+
   screen.background(255, 255, 255);
 
   drawBorder();
@@ -110,12 +115,15 @@ Page2::Page2() {
   num_box = 2;
 }
 
-void Page2::next() {
+void Page2::down() {
   box_sel = (box_sel + 1) % num_box;
   disp_dyn_GFX();
 }
 
 void Page2::disp_static_GFX() {
+
+  Book::pageState = 2;
+
   // setup
   screen.background(255, 255, 255);
   drawBorder();
@@ -185,7 +193,7 @@ Page3::Page3() {
 
 void Page3::up() {
 	switch (box_sel) {
-		case 0: 
+		case 0:
 			scroll_sel_0 = (scroll_sel_0 + 1) % scroll_max;
 			disp_dyn_GFX(); break;
 		case 1:
@@ -202,7 +210,7 @@ void Page3::up() {
 
 void Page3::down() {
 	switch (box_sel) {
-		case 0: 
+		case 0:
 			scroll_sel_0 = (scroll_sel_0 + (scroll_max-1)) % scroll_max;
 			disp_dyn_GFX(); break;
 		case 1:
@@ -228,6 +236,9 @@ void Page3::right() {
 }
 
 void Page3::disp_static_GFX() {
+
+  Book::pageState = 3;
+
   //setup
   screen.background(255, 255, 255);
   drawBorder();
@@ -244,7 +255,7 @@ void Page3::disp_static_GFX() {
   drawBox(88+5*4 + 10, 62, 5*4 + 9, 40, 2);		//dynamic value
 
   screen.setTextSize(5);
-  screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);		
+  screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);
   screen.text(itoa(scroll_sel_1, buffer, 10), 45, 64);
   screen.text(itoa(scroll_sel_2, buffer, 10), 90, 64);
   screen.text(itoa(scroll_sel_3, buffer, 10), 120, 64);
@@ -268,13 +279,13 @@ void Page3::disp_dyn_GFX() {
 		screen.fill(255,255,255);
 		screen.rect(7, 47, 148, 12);
 		screen.stroke (0,0,0);
-		drawBox(13, 62, 5*4 + 9, 40, 2);				
-		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);		
-		drawBox(88, 62, 5*4 + 9, 40, 2);				
-		drawBox(88+5*4 + 10, 62, 5*4 + 9, 40, 2);		
+		drawBox(13, 62, 5*4 + 9, 40, 2);
+		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);
+		drawBox(88, 62, 5*4 + 9, 40, 2);
+		drawBox(88+5*4 + 10, 62, 5*4 + 9, 40, 2);
 		screen.setTextSize(5);
 		screen.stroke(0,0,0);
-		screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);		
+		screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);
 		screen.text(itoa(scroll_sel_1, buffer, 10), 45, 64);
 		screen.text(itoa(scroll_sel_2, buffer, 10), 90, 64);
 		screen.text(itoa(scroll_sel_3, buffer, 10), 120, 64);
@@ -296,13 +307,13 @@ void Page3::disp_dyn_GFX() {
 		screen.fill(255,255,255);
 		screen.rect(7, 47, 148, 12);
 		screen.stroke (0,0,0);
-		drawBox(13, 62, 5*4 + 9, 40, 2);				
-		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);		
-		drawBox(88, 62, 5*4 + 9, 40, 2);				
-		drawBox(88+5*4 + 10, 62, 5*4 + 9, 40, 2);		
+		drawBox(13, 62, 5*4 + 9, 40, 2);
+		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);
+		drawBox(88, 62, 5*4 + 9, 40, 2);
+		drawBox(88+5*4 + 10, 62, 5*4 + 9, 40, 2);
 		screen.setTextSize(5);
 		screen.stroke(0,0,0);
-		screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);		
+		screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);
 		screen.text(itoa(scroll_sel_1, buffer, 10), 45, 64);
 		screen.text(itoa(scroll_sel_2, buffer, 10), 90, 64);
 		screen.text(itoa(scroll_sel_3, buffer, 10), 120, 64);
@@ -324,13 +335,13 @@ void Page3::disp_dyn_GFX() {
 		screen.fill(255,255,255);
 		screen.rect(7, 47, 148, 12);
 		screen.stroke (0,0,0);
-		drawBox(13, 62, 5*4 + 9, 40, 2);				
-		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);		
-		drawBox(88, 62, 5*4 + 9, 40, 2);				
-		drawBox(88+5*4 + 10, 62, 5*4 + 9, 40, 2);		
+		drawBox(13, 62, 5*4 + 9, 40, 2);
+		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);
+		drawBox(88, 62, 5*4 + 9, 40, 2);
+		drawBox(88+5*4 + 10, 62, 5*4 + 9, 40, 2);
 		screen.setTextSize(5);
 		screen.stroke(0,0,0);
-		screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);		
+		screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);
 		screen.text(itoa(scroll_sel_1, buffer, 10), 45, 64);
 		screen.text(itoa(scroll_sel_2, buffer, 10), 90, 64);
 		screen.text(itoa(scroll_sel_3, buffer, 10), 120, 64);
@@ -352,13 +363,13 @@ void Page3::disp_dyn_GFX() {
 		screen.fill(255,255,255);
 		screen.rect(7, 47, 148, 12);
 		screen.stroke (0,0,0);
-		drawBox(13, 62, 5*4 + 9, 40, 2);				
-		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);		
-		drawBox(88, 62, 5*4 + 9, 40, 2);				
-		drawBox(88+5*4 + 10, 62, 5*4 + 9, 40, 2);		
+		drawBox(13, 62, 5*4 + 9, 40, 2);
+		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);
+		drawBox(88, 62, 5*4 + 9, 40, 2);
+		drawBox(88+5*4 + 10, 62, 5*4 + 9, 40, 2);
 		screen.setTextSize(5);
 		screen.stroke(0,0,0);
-		screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);		
+		screen.text(itoa(scroll_sel_0, buffer, 10), 15, 64);
 		screen.text(itoa(scroll_sel_1, buffer, 10), 45, 64);
 		screen.text(itoa(scroll_sel_2, buffer, 10), 90, 64);
 		screen.text(itoa(scroll_sel_3, buffer, 10), 120, 64);
@@ -386,7 +397,7 @@ Page4::Page4() {
 
 void Page4::up() {
 	switch (box_sel) {
-		case 0: 
+		case 0:
 			scroll_sel_0 = (scroll_sel_0 + 1) % scroll_max;
 			disp_dyn_GFX(); break;
 		case 1:
@@ -397,7 +408,7 @@ void Page4::up() {
 
 void Page4::down() {
 	switch (box_sel) {
-		case 0: 
+		case 0:
 			scroll_sel_0 = (scroll_sel_0 - 1) % scroll_max;
 			disp_dyn_GFX(); break;
 		case 1:
@@ -417,6 +428,9 @@ void Page4::right() {
 }
 
 void Page4::disp_static_GFX() {
+
+  Book::pageState = 4;
+
   // setup
   screen.background(255, 255, 255);
   drawBorder();
@@ -427,7 +441,7 @@ void Page4::disp_static_GFX() {
   screen.text("TARGET", alignCenter("target",2), 13);
   screen.text("VOLUME", alignCenter("volume",2), 30);
   drawBox(11, 62, 5*4 + 9, 40, 2);
-  drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);				
+  drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);
   screen.setTextSize(5);
   screen.text(itoa(scroll_sel_0, buffer, 10), 13, 64);					//dynamic value
   screen.text(itoa(scroll_sel_1, buffer, 10), 13+5*4 + 12, 64);			//dynamic value
@@ -448,10 +462,10 @@ void Page4::disp_dyn_GFX() {
 		screen.rect(7, 47, 148, 12);
 		screen.stroke (0,0,0);
 		drawBox(11, 62, 5*4 + 9, 40, 2);
-		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);				
+		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);
 		screen.setTextSize(5);
-		screen.text(itoa(scroll_sel_0, buffer, 10), 13, 64);					
-		screen.text(itoa(scroll_sel_1, buffer, 10), 13+5*4 + 12, 64);	
+		screen.text(itoa(scroll_sel_0, buffer, 10), 13, 64);
+		screen.text(itoa(scroll_sel_1, buffer, 10), 13+5*4 + 12, 64);
 
 		screen.stroke (0,0,0);
 		screen.fill(255,0,0);
@@ -471,17 +485,17 @@ void Page4::disp_dyn_GFX() {
 		screen.rect(7, 47, 148, 12);
 		screen.stroke (0,0,0);
 		drawBox(11, 62, 5*4 + 9, 40, 2);
-		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);				
+		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);
 		screen.setTextSize(5);
-		screen.text(itoa(scroll_sel_0, buffer, 10), 13, 64);					
-		screen.text(itoa(scroll_sel_1, buffer, 10), 13+5*4 + 12, 64);	
+		screen.text(itoa(scroll_sel_0, buffer, 10), 13, 64);
+		screen.text(itoa(scroll_sel_1, buffer, 10), 13+5*4 + 12, 64);
 
 		screen.stroke (0,0,0);
 		screen.fill(255,0,0);
 		screen.circle (13+5*4 + 10 +14, 53, 4);
 		//draw number
 		screen.stroke(255,0,0);
-		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);	
+		drawBox(13+5*4 + 10, 62, 5*4 + 9, 40, 2);
 		screen.setTextSize(5);
 		screen.text(itoa(scroll_sel_1, buffer, 10), 13+5*4 + 12, 64);
 
@@ -494,6 +508,9 @@ Page5::Page5() {
 }
 
 void Page5::disp_static_GFX() {
+
+  Book::pageState = 5;
+
   // setup
   screen.background(255, 255, 255);
   drawBorder();
@@ -525,18 +542,21 @@ void Page5::disp_static_GFX() {
   resetSettings();
 }
 
-//Page6_0
-Page6_0::Page6_0() {
+//Page6
+Page6::Page6() {
 	box_sel = 0;
 	num_box = 2;
 }
 
-void Page6_0::back() {
+void Page6::back() {
 	box_sel = (box_sel + 1) % num_box;
 	disp_dyn_GFX();
 }
 
-void Page6_0::disp_static_GFX() {
+void Page6::disp_static_GFX() {
+
+  Book::pageState = 6;
+
   // setup
   screen.background(255, 255, 255);
   drawBorder();
@@ -572,7 +592,7 @@ void Page6_0::disp_static_GFX() {
   resetSettings();
 }
 
-void Page6_0::disp_dyn_GFX() {
+void Page6::disp_dyn_GFX() {
 	if (box_sel == 1) {
 		screen.stroke(0,0,0);
 		screen.fill(255,0,0);
@@ -603,11 +623,14 @@ void Page6_0::disp_dyn_GFX() {
 	}
 }
 
-//Page6_3
-Page6_3::Page6_3() {
+//Page7
+Page7::Page7() {
 }
 
-void Page6_3::disp_static_GFX() {
+void Page7::disp_static_GFX() {
+
+  Book::pageState = 7;
+
   // setup
   screen.background(255, 255, 255);
   drawBorder();
@@ -628,8 +651,8 @@ void Page6_3::disp_static_GFX() {
   } else { screen.text(itoa(minutes, buffer, 10), 82, 46); }
 
   screen.setTextSize(3);
-  screen.text("h", 64, 55); 
-  screen.text("m", 139, 55); 
+  screen.text("h", 64, 55);
+  screen.text("m", 139, 55);
 
   screen.stroke (0,255,0);
   screen.setTextSize(2);
