@@ -428,10 +428,10 @@ void Page4::up() {
 void Page4::down() {
 	switch (box_sel) {
 		case 0:
-			scroll_sel_0 = (scroll_sel_0 - 1) % scroll_max;
+			scroll_sel_0 = (scroll_sel_0 + (scroll_max-1)) % scroll_max;
 			disp_dyn_GFX(); break;
 		case 1:
-			scroll_sel_1 = (scroll_sel_1 - 1) % scroll_max;
+			scroll_sel_1 = (scroll_sel_1 + (scroll_max-1)) % scroll_max;
 			disp_dyn_GFX(); break;
 	}
 }
