@@ -16,8 +16,8 @@ Variables will be referenced by checking the current state the device is at usin
 #include "FiniteStateMachine.h"
 #include "TFT.h"
 
-#define sd_cs  4
-#define cs   53
+//#define sd_cs  4
+#define cs   10
 #define dc   9
 #define rst  8
 
@@ -25,7 +25,7 @@ TFT screen = TFT(cs, dc, rst);
 
 //public helper functions
 
-void Book::formatTime(unsigned long startTime, unsigned long currentTime) {
+void Book::updateTime(unsigned long startTime, unsigned long currentTime) {
 	minutes = ((currentTime - startTime)/1000) / 60;
 	hours = minutes / 60;
 	minutes = minutes - (hours * 60);

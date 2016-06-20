@@ -5,26 +5,20 @@
  ------------------*/
  
 #include <FiniteStateMachine.h>
-#include <SD.h>    //SD library MUST be declared BEFORE TFT!!!!
+//#include <SD.h>    //SD library MUST be declared BEFORE TFT!!!!
 #include <TFT.h>  // Arduino LCD library
 #include <SPI.h>
 #include <Button.h>
 #include <FugaGraphics.h>
 
-#define button_pin 2
-Button button = Button(button_pin,PULLUP);
+#define button_pin 14
+Button button = Button(button_pin, PULLUP);
 
-#define button_selector 3
+#define button_selector 15
 Button selector = Button(button_selector, PULLUP);
-
-// this variable represents the image to be drawn on screen
-PImage logo;
 
 //global variables
 const byte NUMBER_OF_STATES = 7;
-
-//int state;    //startup() will initialise the state at the end of its function
-//bool stateToggle = false; //second condition for changing states
 
 //initialize states
 State Idle (&noop);
@@ -101,24 +95,19 @@ void state_6_3() {      // DONE
 void setup() {
   // initialize the serial port
   Serial.begin(9600);
-  while (!Serial) {
-    // wait for serial port to connect. Needed for native USB port only
-  }
-  // try to access the SD card. If that fails (e.g.
-  // no card present), the setup process will stop.
 }
 
 void loop() {
-/*
+
   static byte buttonPresses = 0; //only accessible from this function, value is kept between iterations
 
   if (!fuga.isInState(Splash)) {
     if (button.uniquePress()){
       //increment buttonPresses and constrain it to [0, NUMBER_OF_SELECATBLE_STATES-1]
       buttonPresses = ++buttonPresses % (NUMBER_OF_STATES+1);
-    
+    /*
       manipulate the state machine by external input and control
-    
+    */
     //CONTROL THE STATE
       switch (buttonPresses){
         case 0: fuga.transitionTo(Idle); break;
@@ -136,8 +125,8 @@ void loop() {
     }
   }
   
-*/
 
+/*
   if (!fuga.isInState(Splash)) {
     if (button.uniquePress()){
       //Page_6_0.back();
@@ -146,6 +135,8 @@ void loop() {
       //Page_4.right();
     }
   }
+  
+  */
 /*  // read the sensor and map it to the screen height
   int sensor = analogRead(A0);
   int drawHeight = map(sensor, 0, 1023, 0, TFTscreen.height());

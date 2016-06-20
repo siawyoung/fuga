@@ -28,7 +28,7 @@ public:
 	void drawBorder();
 	void drawBox(int x, int y, int width, int height, int thickness);
 	int alignCenter (String text, int textSize);
-	void formatTime (unsigned long startTime, unsigned long currentTime);
+	void updateTime (unsigned long startTime, unsigned long currentTime);
 
 	int setState();
 
