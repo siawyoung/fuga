@@ -66,8 +66,12 @@ int Book::alignCenter (String text, int textSize) {  //centers text in X axis
 
 //Page declarations
 //Page1
-Page1::Page1() {
-}
+Page1::Page1() {}
+
+void Page1::up(){}
+void Page1::down(){}
+void Page1::left(){}
+void Page1::right(){}
 
 void Page1::startScreen() {			//start up function to start screen
 	screen.begin();					//only Page1 has this function
@@ -115,10 +119,18 @@ Page2::Page2() {
   num_box = 2;
 }
 
+void Page2::up() {
+  box_sel = (box_sel - 1) % num_box;
+  disp_dyn_GFX();
+}
+
 void Page2::down() {
   box_sel = (box_sel + 1) % num_box;
   disp_dyn_GFX();
 }
+
+void Page2::left(){}
+void Page2::right(){}
 
 void Page2::disp_static_GFX() {
 

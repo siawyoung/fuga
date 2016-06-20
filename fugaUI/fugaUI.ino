@@ -96,6 +96,12 @@ void state_7() {      // DONE
   fuga.immediateTransitionTo(Idle);
 }
 
+void Page_2_confirm() {
+  if (Page_2.box_sel == 0) {
+    fuga.transitionTo(State_3);
+  }
+}
+
 
 void setup() {
   // initialize the serial port
@@ -107,7 +113,7 @@ void loop() {
   if (confirm.uniquePress() && !fuga.isInState(Splash)) {
     switch (Book::pageState) {
       case 1: fuga.transitionTo(State_2); break;
-      case 2: fuga.transitionTo(State_3); break;
+      case 2: Page_2_confirm(); break;
       case 3: fuga.transitionTo(State_4); break;
       case 4: fuga.transitionTo(State_5); break;
       case 5: fuga.transitionTo(State_6); break;
@@ -124,7 +130,33 @@ void loop() {
       case 6: fuga.transitionTo(State_5); break;
       default: fuga.transitionTo(State_2); break;
     }
+  } else if (up.uniquePress() && !fuga.isInState(Splash)) {
+    switch (Book::pageState) {
+      case 1: Page_Splash.up(); break;
+      case 2: Page_2.up(); break;
+      case 3: fuga.transitionTo(State_2); break;
+      case 4: fuga.transitionTo(State_3); break;
+      case 5: fuga.transitionTo(State_4); break;
+      case 6: fuga.transitionTo(State_5); break;
+      default: fuga.transitionTo(State_2); break;
+    }
+  } else if (down.uniquePress() && !fuga.isInState(Splash)) {
+    switch (Book::pageState) {
+      case 1: Page_Splash.down(); break;
+      case 2: Page_2.down(); break;
+      case 3: fuga.transitionTo(State_2); break;
+      case 4: fuga.transitionTo(State_3); break;
+      case 5: fuga.transitionTo(State_4); break;
+      case 6: fuga.transitionTo(State_5); break;
+      default: fuga.transitionTo(State_2); break;
+    }
   }
+
+
 
  fuga.update();
 }
+
+
+
+

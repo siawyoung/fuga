@@ -23,14 +23,11 @@ Variables will be referenced by checking the current state the device is at usin
 class Book {
 
 public:
-	//void disp_static_GFX();
 	void resetSettings();
 	void drawBorder();
 	void drawBox(int x, int y, int width, int height, int thickness);
 	int alignCenter (String text, int textSize);
 	void updateTime (unsigned long startTime, unsigned long currentTime);
-
-	int setState();
 
 	//variables
 	unsigned num_box = 0;			//# of boxes
@@ -57,6 +54,10 @@ public:
 	Page1();
 	void startScreen();
 	void disp_static_GFX();
+	void up();
+	void down();
+	void left();
+	void right();
 };
 
 class Page2 : public Book {
@@ -96,6 +97,7 @@ class Page5 : public Book {
 public:
 	Page5();
 	void disp_static_GFX();
+
 };
 
 class Page6 : public Book {
