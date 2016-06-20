@@ -19,7 +19,6 @@ Variables will be referenced by checking the current state the device is at usin
 #include <Arduino.h>
 #include <FiniteStateMachine.h>
 #include <TFT.h>		//include the graphics library for the display
-#include <Metro.h>
 
 class Book {
 
@@ -52,6 +51,7 @@ public:
 
 	static int target_duration;
 	static int target_volume;
+	static int remaining_duration;
 
 };
 
@@ -118,6 +118,7 @@ public:
 	Page6();
 	void disp_static_GFX();
 	void disp_dyn_GFX();
+	void disp_timer_GFX();
 	void up();
 	void down();
 	void left();

@@ -10,6 +10,7 @@
 #include <SPI.h>
 #include <Button.h>
 #include <FugaGraphics.h>
+#include <Metro.h>
 
 #define button_up 14
 #define button_down 15
@@ -102,6 +103,12 @@ void Page_2_confirm() {
   }
 }
 
+void Page_5_confirm() {
+  // TODO: SEND INFO TO MOTOR LOGIC HERE
+  Book::remaining_duration = Book::target_duration;
+  fuga.transitionTo(State_6);
+}
+
 void Page_6_confirm() {
   if (Page_6.box_sel == 0) {
     fuga.transitionTo(State_7);
@@ -151,6 +158,8 @@ void setup() {
   Serial.begin(9600);
 }
 
+Metro serialMetro = Metro(1000);
+
 void loop() {
 
   if (confirm.uniquePress() && !fuga.isInState(Splash)) {
@@ -159,7 +168,7 @@ void loop() {
       case 2: Page_2_confirm(); break;
       case 3: fuga.transitionTo(State_4); break;
       case 4: fuga.transitionTo(State_5); break;
-      case 5: fuga.transitionTo(State_6); break;
+      case 5: Page_5_confirm(); break;
       case 6: Page_6_confirm(); break;
       case 7: Page_7_confirm(); break;
       default: fuga.transitionTo(State_2); break;
@@ -218,9 +227,14 @@ void loop() {
   }
 
  fuga.update();
+
+ if (serialMetro.check() == 1 && Book::remaining_duration > 0) {
+   Book::remaining_duration--;
+   if (Book::pageState == 6) {
+    Page_6.disp_timer_GFX();
+   }
+ }
 }
-
-
 
 
 

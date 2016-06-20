@@ -16,7 +16,6 @@ Variables will be referenced by checking the current state the device is at usin
 #include "FiniteStateMachine.h"
 #include "TFT.h"
 #include "FiniteStateMachine.h"
-#include "Metro.h"
 
 
 //#define sd_cs  4
@@ -29,6 +28,7 @@ TFT screen = TFT(cs, dc, rst);
 int Book::pageState = 1;
 int Book::target_duration = 0;
 int Book::target_volume = 0;
+int Book::remaining_duration = 0;
 
 //public helper functions
 
@@ -618,6 +618,20 @@ void Page6::disp_static_GFX() {
 
   Book::pageState = 6;
 
+  String hours = String(Book::remaining_duration / 60);
+  String mins = String(Book::remaining_duration % 60);
+
+  if (hours.length() < 2) {
+    hours = "0" + hours;
+  }
+
+  if (mins.length() < 2) {
+    mins = "0" + mins;
+  }
+
+  String hourString = hours + "    ";
+  String minString = "   " + mins + " ";
+
   // setup
   screen.background(255, 255, 255);
   drawBorder();
@@ -643,10 +657,12 @@ void Page6::disp_static_GFX() {
   screen.stroke(0,0,0);
   screen.setTextSize(1);
   screen.text("T. Remain:", alignCenter("acceptable ",2), 97);
+
+  // numerical values for time remaining
   screen.setTextSize(2);
   screen.stroke(255,0,0);
-  screen.text("00    ", 75, 90);    //dynamic value
-  screen.text("   00 ", 75, 90);    //dynamic value
+  screen.text(hourString.c_str(), 75, 90);    //dynamic value
+  screen.text(minString.c_str(), 75, 90);    //dynamic value
   screen.stroke(0,0,0);
   screen.text("  h  m", 75, 90);
 
@@ -682,6 +698,34 @@ void Page6::disp_dyn_GFX() {
 
 		resetSettings();
 	}
+}
+
+void Page6::disp_timer_GFX() {
+  String hours = String(Book::remaining_duration / 60);
+  String mins = String(Book::remaining_duration % 60);
+
+  if (hours.length() < 2) {
+    hours = "0" + hours;
+  }
+
+  if (mins.length() < 2) {
+    mins = "0" + mins;
+  }
+
+  String hourString = hours + "    ";
+  String minString = "   " + mins + " ";
+
+  screen.stroke(255,255,255);
+  screen.fill(255,255,255);
+  screen.rect(75, 90, 22, 14);
+  screen.rect(111, 90, 22, 14);
+
+  screen.setTextSize(2);
+  screen.stroke(255,0,0);
+  screen.text(hourString.c_str(), 75, 90);    //dynamic value
+  screen.text(minString.c_str(), 75, 90);    //dynamic value
+
+  resetSettings();
 }
 
 //Page7
