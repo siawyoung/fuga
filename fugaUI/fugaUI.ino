@@ -11,11 +11,20 @@
 #include <Button.h>
 #include <FugaGraphics.h>
 
-#define button_pin 14
-Button button = Button(button_pin, PULLUP);
+#define button_up 14
+#define button_down 15
+#define button_left 16
+#define button_right 17
+#define button_confirm 18
+#define button_back 19
+//initialise buttons
+Button up = Button(button_up, PULLUP);
+Button down = Button(button_down, PULLUP);
+Button left = Button(button_left, PULLUP);
+Button right = Button(button_right, PULLUP);
+Button confirm = Button(button_confirm, PULLUP);
+Button back = Button(button_back, PULLUP);
 
-#define button_selector 15
-Button selector = Button(button_selector, PULLUP);
 
 //global variables
 const byte NUMBER_OF_STATES = 7;
@@ -47,7 +56,7 @@ void noop() {    //DONE
 //Page 1: Splash screen
 void state_1() {      //DONE
   Page_Splash.startScreen();
-  fuga.immediateTransitionTo(State_6_0);      //testing state 6_3
+  fuga.immediateTransitionTo(State_3);      //testing state 6_3
   //Page_Splash.disp_static_GFX();
   //fuga.immediateTransitionTo(State_2); 
 }
@@ -102,7 +111,7 @@ void loop() {
   static byte buttonPresses = 0; //only accessible from this function, value is kept between iterations
 
   if (!fuga.isInState(Splash)) {
-    if (button.uniquePress()){
+    if (confirm.uniquePress()){
       //increment buttonPresses and constrain it to [0, NUMBER_OF_SELECATBLE_STATES-1]
       buttonPresses = ++buttonPresses % (NUMBER_OF_STATES+1);
     /*
@@ -120,9 +129,10 @@ void loop() {
       }
     }
     //test selector
-    if (selector.uniquePress()){
-        Page_2.next();
-    }
+    if (up.uniquePress()){Page_3.up();}
+    if (down.uniquePress()){Page_3.down();}
+    if (left.uniquePress()){Page_3.left();}
+    if (right.uniquePress()){Page_3.right();}
   }
   
 
