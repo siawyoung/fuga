@@ -102,6 +102,49 @@ void Page_2_confirm() {
   }
 }
 
+void Page_6_confirm() {
+  if (Page_6.box_sel == 0) {
+    fuga.transitionTo(State_7);
+  } else if (Page_6.box_sel == 1) {
+    Page_6.box_sel = 0;
+    Page_6.disp_dyn_GFX();
+  }
+}
+
+void Page_6_back() {
+  if (Page_6.box_sel == 0) {
+    Page_6.box_sel = 1;
+    Page_6.disp_dyn_GFX();
+  } else if (Page_6.box_sel == 1) {
+
+    // TODO: CANCEL DRAIN LOGIC HERE
+
+    Page_6.box_sel = 0;
+    fuga.transitionTo(State_5);
+  }
+}
+
+void Page_7_confirm() {
+  if (Page_7.box_sel == 0) {
+    fuga.transitionTo(State_6);
+  } else if (Page_7.box_sel == 1) {
+    Page_7.box_sel = 0;
+    Page_7.disp_dyn_GFX();
+  }
+}
+
+void Page_7_back() {
+  if (Page_7.box_sel == 0) {
+    Page_7.box_sel = 1;
+    Page_7.disp_dyn_GFX();
+  } else if (Page_7.box_sel == 1) {
+
+    // TODO: CANCEL DRAIN LOGIC HERE
+
+    Page_7.box_sel = 0;
+    fuga.transitionTo(State_5);
+  }
+}
 
 void setup() {
   // initialize the serial port
@@ -117,7 +160,8 @@ void loop() {
       case 3: fuga.transitionTo(State_4); break;
       case 4: fuga.transitionTo(State_5); break;
       case 5: fuga.transitionTo(State_6); break;
-      case 6: fuga.transitionTo(State_7); break;
+      case 6: Page_6_confirm(); break;
+      case 7: Page_7_confirm(); break;
       default: fuga.transitionTo(State_2); break;
     }
   } else if (back.uniquePress() && !fuga.isInState(Splash)) {
@@ -127,7 +171,8 @@ void loop() {
       case 3: fuga.transitionTo(State_2); break;
       case 4: fuga.transitionTo(State_3); break;
       case 5: fuga.transitionTo(State_4); break;
-      case 6: fuga.transitionTo(State_5); break;
+      case 6: Page_6_back(); break;
+      case 7: Page_7_back(); break;
       default: fuga.transitionTo(State_2); break;
     }
   } else if (up.uniquePress() && !fuga.isInState(Splash)) {
@@ -174,4 +219,8 @@ void loop() {
 
  fuga.update();
 }
+
+
+
+
 

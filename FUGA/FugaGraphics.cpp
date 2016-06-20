@@ -16,6 +16,7 @@ Variables will be referenced by checking the current state the device is at usin
 #include "FiniteStateMachine.h"
 #include "TFT.h"
 #include "FiniteStateMachine.h"
+#include "Metro.h"
 
 
 //#define sd_cs  4
@@ -533,10 +534,7 @@ void Page4::disp_dyn_GFX() {
 Page5::Page5() {
 }
 
-void Page5::disp_static_GFX() {
-
-  Book::pageState = 5;
-
+String getDurationString() {
   String hours = String(Book::target_duration / 60);
   String mins = String(Book::target_duration % 60);
 
@@ -550,6 +548,10 @@ void Page5::disp_static_GFX() {
 
   String durationString = hours + " " + mins + " ";
 
+  return durationString;
+}
+
+String getVolumeString() {
   String volume = String(Book::target_volume);
 
   switch (volume.length()) {
@@ -557,6 +559,13 @@ void Page5::disp_static_GFX() {
     case 2: volume = "00" + volume + " "; break;
     case 3: volume = "0" + volume + " "; break;
   }
+
+  return volume;
+}
+
+void Page5::disp_static_GFX() {
+
+  Book::pageState = 5;
 
   // setup
   screen.background(255, 255, 255);
@@ -574,8 +583,8 @@ void Page5::disp_static_GFX() {
 
   screen.stroke(255,0,0);
   screen.setTextSize(2);
-  screen.text(durationString.c_str(), 75, 44);    //dynamic value
-  screen.text(volume.c_str(), 75, 65);    //dynamic value
+  screen.text(getDurationString().c_str(), 75, 44);    //dynamic value
+  screen.text(getVolumeString().c_str(), 75, 65);    //dynamic value
   screen.stroke(0,0,0);
   screen.text("  h", 75, 44);
   screen.text("     m", 75, 44);
@@ -604,11 +613,6 @@ void Page6::up(){}
 void Page6::down(){}
 void Page6::left(){}
 void Page6::right(){}
-
-// void Page6::back() {
-// 	box_sel = (box_sel + 1) % num_box;
-// 	disp_dyn_GFX();
-// }
 
 void Page6::disp_static_GFX() {
 
@@ -698,27 +702,79 @@ void Page7::disp_static_GFX() {
   drawBorder();
 
   screen.stroke (0,0,0);
-  screen.setTextSize(2);
-  screen.text("TIME ELAPSED", alignCenter("time elapsed",2), 13);
-
-  screen.setTextSize(5);
-  if (hours < 10) {
-	  screen.text("0", 7, 46);
-	  screen.text(itoa(hours, buffer, 10), 37, 46); //dynamic value
-  } else { screen.text(itoa(hours, buffer, 10), 7, 46); }
-
-  if (minutes < 10) {
-	  screen.text("0", 82, 46);
-	  screen.text(itoa(minutes, buffer, 10), 112, 46); //dynamic value
-  } else { screen.text(itoa(minutes, buffer, 10), 82, 46); }
-
   screen.setTextSize(3);
-  screen.text("h", 64, 55);
-  screen.text("m", 139, 55);
+  drawBox(alignCenter("summary",3)-2, 11, 5*3*7+3*6+4, 26, 2);
+  screen.text("SUMMARY", alignCenter("summary",3), 13);
+
+  screen.setTextSize(1);
+  screen.text("DURATION :", 13, 47);
+  screen.text("VOLUME   :", 13, 70);
+
+  screen.stroke(255,0,0);
+  screen.setTextSize(2);
+  screen.text(getDurationString().c_str(), 75, 44);    //dynamic value
+  screen.text(getVolumeString().c_str(), 75, 65);    //dynamic value
+  screen.stroke(0,0,0);
+  screen.text("  h", 75, 44);
+  screen.text("     m", 75, 44);
+  screen.text("    ml", 75, 65);
+
+  // screen.stroke (0,0,0);
+  // screen.setTextSize(2);
+  // screen.text("TIME ELAPSED", alignCenter("time elapsed",2), 13);
+
+  // screen.setTextSize(5);
+  // if (hours < 10) {
+	 //  screen.text("0", 7, 46);
+	 //  screen.text(itoa(hours, buffer, 10), 37, 46); //dynamic value
+  // } else { screen.text(itoa(hours, buffer, 10), 7, 46); }
+
+  // if (minutes < 10) {
+	 //  screen.text("0", 82, 46);
+	 //  screen.text(itoa(minutes, buffer, 10), 112, 46); //dynamic value
+  // } else { screen.text(itoa(minutes, buffer, 10), 82, 46); }
+
+  // screen.setTextSize(3);
+  // screen.text("h", 64, 55);
+  // screen.text("m", 139, 55);
 
   screen.stroke (0,255,0);
   screen.setTextSize(2);
   screen.text("IN PROGRESS", alignCenter("in progress",2), 95);
 
-  resetSettings();
+  // resetSettings();
+}
+
+void Page7::disp_dyn_GFX() {
+  if (box_sel == 1) {
+    screen.stroke(0,0,0);
+    screen.fill(255,0,0);
+    screen.rect(alignCenter("terminate?  ",2), 40, 142, 47);
+    screen.setTextSize(2);
+    screen.text("TERMINATE?", alignCenter("terminate?", 2), 55);
+
+    resetSettings();
+  } else {
+    //clear
+    screen.stroke(255,255,255);
+    screen.fill(255,255,255);
+    screen.rect(alignCenter("terminate?  ",2), 40, 142, 47);
+
+    // redraw duration and volume
+    screen.stroke (0,0,0);
+    screen.setTextSize(1);
+    screen.text("DURATION :", 13, 47);
+    screen.text("VOLUME   :", 13, 70);
+
+    screen.stroke(255,0,0);
+    screen.setTextSize(2);
+    screen.text(getDurationString().c_str(), 75, 44);    //dynamic value
+    screen.text(getVolumeString().c_str(), 75, 65);    //dynamic value
+    screen.stroke(0,0,0);
+    screen.text("  h", 75, 44);
+    screen.text("     m", 75, 44);
+    screen.text("    ml", 75, 65);
+
+    resetSettings();
+  }
 }
