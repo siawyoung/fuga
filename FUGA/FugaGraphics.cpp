@@ -15,6 +15,8 @@ Variables will be referenced by checking the current state the device is at usin
 #include "FugaGraphics.h"
 #include "FiniteStateMachine.h"
 #include "TFT.h"
+#include "FiniteStateMachine.h"
+
 
 //#define sd_cs  4
 #define cs   10
@@ -201,16 +203,16 @@ void Page3::up() {
 void Page3::down() {
 	switch (box_sel) {
 		case 0: 
-			scroll_sel_0 = (scroll_sel_0 - 1) % scroll_max;
+			scroll_sel_0 = (scroll_sel_0 + (scroll_max-1)) % scroll_max;
 			disp_dyn_GFX(); break;
 		case 1:
-			scroll_sel_1 = (scroll_sel_1 - 1) % scroll_max;
+			scroll_sel_1 = (scroll_sel_1 + (scroll_max-1)) % scroll_max;
 			disp_dyn_GFX(); break;
 		case 2:
-			scroll_sel_2 = (scroll_sel_2 - 1) % scroll_max;
+			scroll_sel_2 = (scroll_sel_2 + (scroll_max-1)) % scroll_max;
 			disp_dyn_GFX(); break;
 		case 3:
-			scroll_sel_3 = (scroll_sel_3 - 1) % scroll_max;
+			scroll_sel_3 = (scroll_sel_3 + (scroll_max-1)) % scroll_max;
 			disp_dyn_GFX(); break;
 	}
 }
@@ -376,7 +378,7 @@ void Page3::disp_dyn_GFX() {
 
 //Page4
 Page4::Page4() {
-	box_sel = 1;
+	box_sel = 0;
 	num_box = 2;
 	scroll_sel_0 = 0;
 	scroll_sel_1 = 0;
