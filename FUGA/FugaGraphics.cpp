@@ -554,16 +554,26 @@ void Page5::disp_static_GFX() {
   resetSettings();
 }
 
+void Page5::up(){}
+void Page5::down(){}
+void Page5::left(){}
+void Page5::right(){}
+
 //Page6
 Page6::Page6() {
 	box_sel = 0;
 	num_box = 2;
 }
 
-void Page6::back() {
-	box_sel = (box_sel + 1) % num_box;
-	disp_dyn_GFX();
-}
+void Page6::up(){}
+void Page6::down(){}
+void Page6::left(){}
+void Page6::right(){}
+
+// void Page6::back() {
+// 	box_sel = (box_sel + 1) % num_box;
+// 	disp_dyn_GFX();
+// }
 
 void Page6::disp_static_GFX() {
 
@@ -638,6 +648,11 @@ void Page6::disp_dyn_GFX() {
 //Page7
 Page7::Page7() {
 }
+
+void Page7::up(){}
+void Page7::down(){}
+void Page7::left(){}
+void Page7::right(){}
 
 void Page7::disp_static_GFX() {
 

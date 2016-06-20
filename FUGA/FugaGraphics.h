@@ -97,7 +97,10 @@ class Page5 : public Book {
 public:
 	Page5();
 	void disp_static_GFX();
-
+	void up();
+	void down();
+	void left();
+	void right();
 };
 
 class Page6 : public Book {
@@ -105,13 +108,20 @@ public:
 	Page6();
 	void disp_static_GFX();
 	void disp_dyn_GFX();
-	void back();
+	void up();
+	void down();
+	void left();
+	void right();
 };
 
 class Page7 : public Book {
 public:
 	Page7();
 	void disp_static_GFX();
+	void up();
+	void down();
+	void left();
+	void right();
 };
 
 
