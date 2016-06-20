@@ -134,25 +134,43 @@ void loop() {
     switch (Book::pageState) {
       case 1: Page_Splash.up(); break;
       case 2: Page_2.up(); break;
-      case 3: fuga.transitionTo(State_2); break;
-      case 4: fuga.transitionTo(State_3); break;
-      case 5: fuga.transitionTo(State_4); break;
-      case 6: fuga.transitionTo(State_5); break;
-      default: fuga.transitionTo(State_2); break;
+      case 3: Page_3.up(); break;
+      case 4: Page_4.up(); break;
+      case 5: Page_5.up(); break;
+      case 6: Page_6.up(); break;
+      case 7: Page_7.up(); break;
     }
   } else if (down.uniquePress() && !fuga.isInState(Splash)) {
     switch (Book::pageState) {
       case 1: Page_Splash.down(); break;
       case 2: Page_2.down(); break;
-      case 3: fuga.transitionTo(State_2); break;
-      case 4: fuga.transitionTo(State_3); break;
-      case 5: fuga.transitionTo(State_4); break;
-      case 6: fuga.transitionTo(State_5); break;
-      default: fuga.transitionTo(State_2); break;
+      case 3: Page_3.down(); break;
+      case 4: Page_4.down(); break;
+      case 5: Page_5.down(); break;
+      case 6: Page_6.down(); break;
+      case 7: Page_7.down(); break;
+    }
+  } else if (left.uniquePress() && !fuga.isInState(Splash)) {
+    switch (Book::pageState) {
+      case 1: Page_Splash.left(); break;
+      case 2: Page_2.left(); break;
+      case 3: Page_3.left(); break;
+      case 4: Page_4.left(); break;
+      case 5: Page_5.left(); break;
+      case 6: Page_6.left(); break;
+      case 7: Page_7.left(); break;
+    }
+  } else if (right.uniquePress() && !fuga.isInState(Splash)) {
+    switch (Book::pageState) {
+      case 1: Page_Splash.right(); break;
+      case 2: Page_2.right(); break;
+      case 3: Page_3.right(); break;
+      case 4: Page_4.right(); break;
+      case 5: Page_5.right(); break;
+      case 6: Page_6.right(); break;
+      case 7: Page_7.right(); break;
     }
   }
-
-
 
  fuga.update();
 }
