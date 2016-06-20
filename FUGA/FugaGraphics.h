@@ -27,7 +27,8 @@ public:
 	void drawBorder();
 	void drawBox(int x, int y, int width, int height, int thickness);
 	int alignCenter (String text, int textSize);
-	void updateTime (unsigned long startTime, unsigned long currentTime);
+	String getDurationString();
+	String getVolumeString();
 
 	//variables
 	unsigned num_box = 0;			//# of boxes

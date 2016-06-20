@@ -32,12 +32,6 @@ int Book::remaining_duration = 0;
 
 //public helper functions
 
-void Book::updateTime(unsigned long startTime, unsigned long currentTime) {
-	minutes = ((currentTime - startTime)/1000) / 60;
-	hours = minutes / 60;
-	minutes = minutes - (hours * 60);
-}
-
 void Book::resetSettings(){
   screen.fill(0,0,0);
   screen.setTextSize(1);
@@ -66,15 +60,43 @@ int Book::alignCenter (String text, int textSize) {  //centers text in X axis
   return (int) (80 - stringLength*0.5);
 }
 
+String Book::getDurationString() {
+  String hours = String(Book::target_duration / 60);
+  String mins = String(Book::target_duration % 60);
+
+  if (hours.length() < 2) {
+    hours = "0" + hours;
+  }
+
+  if (mins.length() < 2) {
+    mins = "0" + mins;
+  }
+
+  String durationString = hours + " " + mins + " ";
+
+  return durationString;
+}
+
+String Book::getVolumeString() {
+  String volume = String(Book::target_volume);
+
+  switch (volume.length()) {
+    case 1: volume = "000" + volume + " "; break;
+    case 2: volume = "00" + volume + " "; break;
+    case 3: volume = "0" + volume + " "; break;
+  }
+
+  return volume;
+}
 
 //Page declarations
 //Page1
 Page1::Page1() {}
 
-void Page1::up(){}
-void Page1::down(){}
-void Page1::left(){}
-void Page1::right(){}
+void Page1::up(){/* noop */}
+void Page1::down(){/* noop */}
+void Page1::left(){/* noop */}
+void Page1::right(){/* noop */}
 
 void Page1::startScreen() {			//start up function to start screen
 	screen.begin();					//only Page1 has this function
@@ -132,8 +154,8 @@ void Page2::down() {
   disp_dyn_GFX();
 }
 
-void Page2::left(){/*noop*/}
-void Page2::right(){/*noop*/}
+void Page2::left(){/* noop */}
+void Page2::right(){/* noop */}
 
 void Page2::disp_static_GFX() {
 
@@ -531,37 +553,12 @@ void Page4::disp_dyn_GFX() {
 }
 
 //Page5
-Page5::Page5() {
-}
+Page5::Page5() {}
 
-String getDurationString() {
-  String hours = String(Book::target_duration / 60);
-  String mins = String(Book::target_duration % 60);
-
-  if (hours.length() < 2) {
-    hours = "0" + hours;
-  }
-
-  if (mins.length() < 2) {
-    mins = "0" + mins;
-  }
-
-  String durationString = hours + " " + mins + " ";
-
-  return durationString;
-}
-
-String getVolumeString() {
-  String volume = String(Book::target_volume);
-
-  switch (volume.length()) {
-    case 1: volume = "000" + volume + " "; break;
-    case 2: volume = "00" + volume + " "; break;
-    case 3: volume = "0" + volume + " "; break;
-  }
-
-  return volume;
-}
+void Page5::up(){/* noop */}
+void Page5::down(){/* noop */}
+void Page5::left(){/* noop */}
+void Page5::right(){/* noop */}
 
 void Page5::disp_static_GFX() {
 
@@ -598,21 +595,16 @@ void Page5::disp_static_GFX() {
   resetSettings();
 }
 
-void Page5::up(){}
-void Page5::down(){}
-void Page5::left(){}
-void Page5::right(){}
-
 //Page6
 Page6::Page6() {
 	box_sel = 0;
 	num_box = 2;
 }
 
-void Page6::up(){}
-void Page6::down(){}
-void Page6::left(){}
-void Page6::right(){}
+void Page6::up(){/* noop */}
+void Page6::down(){/* noop */}
+void Page6::left(){/* noop */}
+void Page6::right(){/* noop */}
 
 void Page6::disp_static_GFX() {
 
@@ -732,10 +724,10 @@ void Page6::disp_timer_GFX() {
 Page7::Page7() {
 }
 
-void Page7::up(){}
-void Page7::down(){}
-void Page7::left(){}
-void Page7::right(){}
+void Page7::up(){/* noop */}
+void Page7::down(){/* noop */}
+void Page7::left(){/* noop */}
+void Page7::right(){/* noop */}
 
 void Page7::disp_static_GFX() {
 
