@@ -98,6 +98,7 @@ void state_7() {      // DONE
 }
 
 void Page_2_confirm() {
+  // only proceed to page 3 if "new drain" is selected
   if (Page_2.box_sel == 0) {
     fuga.transitionTo(State_3);
   }
@@ -110,8 +111,10 @@ void Page_5_confirm() {
 }
 
 void Page_6_confirm() {
+  // if no terminate popup, move to page 7
   if (Page_6.box_sel == 0) {
     fuga.transitionTo(State_7);
+  // else dismiss the terminate popup
   } else if (Page_6.box_sel == 1) {
     Page_6.box_sel = 0;
     Page_6.disp_dyn_GFX();
@@ -119,9 +122,11 @@ void Page_6_confirm() {
 }
 
 void Page_6_back() {
+  // if no terminate popup, display it
   if (Page_6.box_sel == 0) {
     Page_6.box_sel = 1;
     Page_6.disp_dyn_GFX();
+  // else, actually cancel the drain and go to page 5
   } else if (Page_6.box_sel == 1) {
 
     // TODO: CANCEL DRAIN LOGIC HERE
@@ -171,7 +176,6 @@ void loop() {
       case 5: Page_5_confirm(); break;
       case 6: Page_6_confirm(); break;
       case 7: Page_7_confirm(); break;
-      default: fuga.transitionTo(State_2); break;
     }
   } else if (back.uniquePress() && !fuga.isInState(Splash)) {
     switch (Book::pageState) {
@@ -182,7 +186,6 @@ void loop() {
       case 5: fuga.transitionTo(State_4); break;
       case 6: Page_6_back(); break;
       case 7: Page_7_back(); break;
-      default: fuga.transitionTo(State_2); break;
     }
   } else if (up.uniquePress() && !fuga.isInState(Splash)) {
     switch (Book::pageState) {
@@ -228,8 +231,10 @@ void loop() {
 
  fuga.update();
 
+ // Timer check if interval has passed
  if (serialMetro.check() == 1 && Book::remaining_duration > 0) {
    Book::remaining_duration--;
+   // if we're on page 6, update the graphics
    if (Book::pageState == 6) {
     Page_6.disp_timer_GFX();
    }
