@@ -175,6 +175,3 @@ void loop() {
  fuga.update();
 }
 
-
-
-

@@ -45,7 +45,11 @@ public:
 
 	char buffer [5];				//buffer for int to String conversion
 
+
+	// GLOBAL STATIC STATE
 	static int pageState;					//state tracker
+
+	static int target_duration;
 
 };
 
@@ -80,6 +84,8 @@ public:
 	void down();
 	void left();
 	void right();
+private:
+	void update_duration();
 };
 
 class Page4 : public Book {

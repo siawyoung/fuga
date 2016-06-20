@@ -26,6 +26,7 @@ Variables will be referenced by checking the current state the device is at usin
 TFT screen = TFT(cs, dc, rst);
 
 int Book::pageState = 1;
+int Book::target_duration = 0;
 
 //public helper functions
 
@@ -129,8 +130,8 @@ void Page2::down() {
   disp_dyn_GFX();
 }
 
-void Page2::left(){}
-void Page2::right(){}
+void Page2::left(){/*noop*/}
+void Page2::right(){/*noop*/}
 
 void Page2::disp_static_GFX() {
 
@@ -203,6 +204,10 @@ Page3::Page3() {
 	scroll_sel_3 = 0;
 }
 
+void Page3::update_duration() {
+  Book::target_duration = (((10 * scroll_sel_0) + (scroll_sel_1)) * 60) + (10 * scroll_sel_2) + scroll_sel_3;
+}
+
 void Page3::up() {
 	switch (box_sel) {
 		case 0:
@@ -218,6 +223,7 @@ void Page3::up() {
 			scroll_sel_3 = (scroll_sel_3 + 1) % scroll_max;
 			disp_dyn_GFX(); break;
 	}
+  update_duration();
 }
 
 void Page3::down() {
@@ -235,6 +241,7 @@ void Page3::down() {
 			scroll_sel_3 = (scroll_sel_3 + (scroll_max-1)) % scroll_max;
 			disp_dyn_GFX(); break;
 	}
+  update_duration();
 }
 
 void Page3::left() {
@@ -523,6 +530,23 @@ void Page5::disp_static_GFX() {
 
   Book::pageState = 5;
 
+  // char hours[3]; 
+  // hours;= itoa(Book::target_duration / 60, buffer, 10);
+  // char mins[]  = itoa(Book::target_duration % 60, buffer, 10);
+
+  String hours = String(Book::target_duration / 60);
+  String mins = String(Book::target_duration % 60);
+
+  if (hours.length() < 2) {
+    hours = "0" + hours;
+  }
+
+  if (mins.length() < 2) {
+    mins = "0" + mins;
+  }
+
+  String durationString = hours + " " + mins + " ";
+
   // setup
   screen.background(255, 255, 255);
   drawBorder();
@@ -539,7 +563,8 @@ void Page5::disp_static_GFX() {
 
   screen.stroke(255,0,0);
   screen.setTextSize(2);
-  screen.text("00 00 ", 75, 44);    //dynamic value
+  // screen.text("00 00 ", 75, 44);    //dynamic value
+  screen.text(durationString.c_str(), 75, 44);    //dynamic value
   screen.text("0000 ", 75, 65);    //dynamic value
   screen.stroke(0,0,0);
   screen.text("  h", 75, 44);
