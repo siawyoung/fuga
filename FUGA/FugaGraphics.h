@@ -50,6 +50,7 @@ public:
 	static int pageState;					//state tracker
 
 	static int target_duration;
+	static int target_volume;
 
 };
 
@@ -97,6 +98,8 @@ public:
 	void down();
 	void left();
 	void right();
+private:
+	void update_volume();
 };
 
 class Page5 : public Book {

@@ -27,6 +27,7 @@ TFT screen = TFT(cs, dc, rst);
 
 int Book::pageState = 1;
 int Book::target_duration = 0;
+int Book::target_volume = 0;
 
 //public helper functions
 
@@ -414,6 +415,10 @@ Page4::Page4() {
 	scroll_sel_1 = 0;
 }
 
+void Page4::update_volume() {
+  Book::target_volume = (1000 * scroll_sel_0) + (100 * scroll_sel_1);
+}
+
 void Page4::up() {
 	switch (box_sel) {
 		case 0:
@@ -423,6 +428,7 @@ void Page4::up() {
 			scroll_sel_1 = (scroll_sel_1 + 1) % scroll_max;
 			disp_dyn_GFX(); break;
 	}
+  update_volume();
 }
 
 void Page4::down() {
@@ -434,6 +440,7 @@ void Page4::down() {
 			scroll_sel_1 = (scroll_sel_1 + (scroll_max-1)) % scroll_max;
 			disp_dyn_GFX(); break;
 	}
+  update_volume();
 }
 
 void Page4::left() {
@@ -530,10 +537,6 @@ void Page5::disp_static_GFX() {
 
   Book::pageState = 5;
 
-  // char hours[3]; 
-  // hours;= itoa(Book::target_duration / 60, buffer, 10);
-  // char mins[]  = itoa(Book::target_duration % 60, buffer, 10);
-
   String hours = String(Book::target_duration / 60);
   String mins = String(Book::target_duration % 60);
 
@@ -546,6 +549,14 @@ void Page5::disp_static_GFX() {
   }
 
   String durationString = hours + " " + mins + " ";
+
+  String volume = String(Book::target_volume);
+
+  switch (volume.length()) {
+    case 1: volume = "000" + volume + " "; break;
+    case 2: volume = "00" + volume + " "; break;
+    case 3: volume = "0" + volume + " "; break;
+  }
 
   // setup
   screen.background(255, 255, 255);
@@ -563,9 +574,8 @@ void Page5::disp_static_GFX() {
 
   screen.stroke(255,0,0);
   screen.setTextSize(2);
-  // screen.text("00 00 ", 75, 44);    //dynamic value
   screen.text(durationString.c_str(), 75, 44);    //dynamic value
-  screen.text("0000 ", 75, 65);    //dynamic value
+  screen.text(volume.c_str(), 75, 65);    //dynamic value
   screen.stroke(0,0,0);
   screen.text("  h", 75, 44);
   screen.text("     m", 75, 44);
