@@ -50,8 +50,8 @@ public:
 	// GLOBAL STATIC STATE
 	static int pageState;					//state tracker
 
-	static int target_duration;
-	static int target_volume;
+	static int target_duration; // in mins
+	static int target_volume;   // in ml
 	static int remaining_duration;
 
 };

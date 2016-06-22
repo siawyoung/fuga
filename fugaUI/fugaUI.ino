@@ -5,7 +5,6 @@
  ------------------*/
 
 #include <FiniteStateMachine.h>
-//#include <SD.h>    //SD library MUST be declared BEFORE TFT!!!!
 #include <TFT.h>  // Arduino LCD library
 #include <SPI.h>
 #include <Button.h>
@@ -18,6 +17,71 @@
 #define button_right 17
 #define button_confirm 18
 #define button_back 19
+
+#define pi 3.14159265358979323846
+
+int sysStat;
+
+// Hardware constants and initializations
+////////// CSM //////////
+int Mode = 6; //phase/enbl mode
+int APhase = 5; // CSM direction control
+int AEnbl = 4; // CSM speed control
+int Adir = HIGH; // CSM default direction (CCW?)
+
+int encoderPinOutA = 20; // interrupt pin
+int encoderPinOutB = 7;
+
+float TurnsAngle, prevTurnsAngle, errorAngle, setAngle;
+const float angle0 = 0; // syringe to external
+const float angle1 = pi/2; // syringe to lung
+volatile signed long Rotor = 0;
+
+int CSMstat; // LOW is stationary, HIGH is moving
+
+////////// Stepper Motor LA /////////
+int dirPin  = 1;
+int stepPin = 2;
+int Enable  = 0;  // Active Low to enable
+int Sleep   = 3;  // Active Low to sleep - A logic high allows normal operation and startup of the device in the home position
+//int M1      = 6;  // default HIGH:  LL 1, HL 2, LH 4, HH 8
+//int M2      = 7;  // default HIGH
+const int microsteps = 8; // 1, 2, 4, 8 microsteps (must align with M1 and M2 wiring)
+int revSign = 1;
+
+// 1ml = 3.15mm
+const double distPerml = 0.00315;
+const double pitch = 0.00254; // m - of the lead screw              !!change when the lead screw is here
+const double maxml = 20; // max draw volume in ml
+
+// Getting values from UI library
+// these values are set in Page_5_confirm
+int drawStart = 0;
+double distTotal, cycle_num, rpm;
+
+int LAstat; // LOW is stationary, HIGH is moving
+
+////////// Buttons and Switch //////////
+int CSMswitch = 21;
+int buttonFront = 22;
+int buttonBack = 23;
+
+/////////// Update Rotation //////////
+
+void UpdateRotation(){
+  if (sysStat){
+    if (digitalRead(encoderPinOutB)){
+      Rotor++;
+    }
+    else {
+      Rotor--;
+      }
+  }
+}
+
+////////// variables for PID //////////
+
+float csmP, csmI, csmD, csmint, csmControl;
 
 //initialise buttons
 Button up = Button(button_up, PULLUP);
@@ -105,7 +169,15 @@ void Page_2_confirm() {
 }
 
 void Page_5_confirm() {
-  // TODO: SEND INFO TO MOTOR LOGIC HERE
+
+  // SET MOTOR VALUES HERE
+
+  distTotal = Book::target_volume * distPerml;
+  cycle_num = distTotal / (maxml * distPerml);
+  rpm = (distTotal * 60 / (((Book::target_duration * 60) - 6 * cycle_num) / 2)) / pitch; // target_duration is in mins
+  drawStart = 1;
+  digitalWrite(Enable, LOW);
+
   Book::remaining_duration = Book::target_duration;
   fuga.transitionTo(State_6);
 }
@@ -161,11 +233,149 @@ void Page_7_back() {
 void setup() {
   // initialize the serial port
   Serial.begin(9600);
+  pinMode(Mode, OUTPUT);
+  pinMode(APhase, OUTPUT);
+  pinMode(AEnbl, OUTPUT);
+  pinMode(dirPin, OUTPUT);
+  pinMode(stepPin, OUTPUT);
+  pinMode(Enable, OUTPUT);
+  pinMode(Sleep, OUTPUT);
+
+  pinMode(encoderPinOutA, INPUT);
+  pinMode(encoderPinOutB, INPUT);
+  pinMode(CSMswitch, INPUT);
+  pinMode(buttonFront, INPUT);
+  pinMode(buttonBack, INPUT);
+
+  attachInterrupt(digitalPinToInterrupt(encoderPinOutA), UpdateRotation, RISING);
+
+  digitalWrite(Mode, HIGH);
+  digitalWrite(Enable, LOW);
+  digitalWrite(Sleep, HIGH);
+  CSMstat = HIGH;
+  LAstat = HIGH;
+  sysStat = 0;                  // 0: initializing 1: working
+  drawStart = 0;
+  //Serial.println("setup");
 }
 
-Metro serialMetro = Metro(1000);
+Metro serialMetro = Metro(60000);
 
 void loop() {
+  Serial.print("LAstat: "); Serial.println(LAstat);
+  /////// MOTOR LOOP /////////
+  if ((rpm > 200) || (rpm < 10)) {
+
+    digitalWrite(Enable, HIGH);
+    Serial.print("rpm: ");
+    Serial.print(rpm);
+    Serial.println(", too fast or too slow");
+
+  } else {
+
+//     Serial.println(rpm);
+
+    if (sysStat == 0) {
+
+      if (LAstat) {
+        Serial.println("initializing...");
+        // rotateDeg(-3*360, 120);                       // uncomment with buttons
+        rotateDeg(0,0);                                 // comment this out with buttons
+      }
+
+      if (CSMstat){
+        Serial.println("initializing...");
+        // setAngle = -2*pi;                             // uncomment with switch
+        // int reachCSM = digitalRead(CSMswitch);        // uncomment with switch
+        int reachCSM = 1;                               // comment out with switch
+
+        if (reachCSM) {
+          CSMstat = LOW;
+        }
+
+      } else if ((CSMstat == LOW) && (LAstat == LOW)) {
+        Serial.println("initialized");
+
+        if (drawStart) {
+//          Serial.println("HIIIIII");
+          sysStat = 1;
+          CSMstat = HIGH;
+          setAngle = angle1;
+        }
+      }
+
+    } else if (sysStat == 1) {
+      TurnsAngle = calcAngle(Rotor);
+      ////////// LA //////////
+      if (LAstat) {
+        delay(1000);
+        Serial.print("cycle left: ");
+        Serial.println(cycle_num);
+        LArun();
+        delay(500);
+      }
+    } else if (sysStat == 2) {
+      CSMstat = LOW;
+      LAstat = LOW;
+      Serial.println("Done");
+      digitalWrite(Sleep, LOW);
+    }
+
+    ////////// CSM error //////////
+    errorAngle = setAngle - TurnsAngle;
+    //Serial.println(errorAngle);
+    if (abs(errorAngle) < pi / 4) {
+      csmint = csmint + errorAngle;
+    } else {
+      csmint = 0;
+    }
+
+    csmP = 10 * errorAngle; // set Kp
+    csmI = 0 * csmint; //set Ki
+    csmD = (prevTurnsAngle - TurnsAngle)* 0.1; // set Kd
+    csmControl = csmP + csmI + csmD;
+    csmControl = abs(csmControl) + 150;
+
+    if (abs(errorAngle) <= 0.05) {
+      CSMstat = LOW;
+
+      if (sysStat == 1) {
+
+        if (setAngle == angle0){
+          setAngle = angle1;
+          Serial.println("current state: syringe -> external");
+        } else {
+          setAngle = angle0;
+          Serial.println("current state: lung -> syringe");
+        }
+        LAstat = HIGH;
+      }
+    } else if (errorAngle > 0) {
+      digitalWrite(APhase, Adir);
+    } else {
+      digitalWrite(APhase, !Adir);
+    }
+
+    if (abs(csmControl) > 255) {
+      csmControl = 255;
+    }
+
+    prevTurnsAngle = TurnsAngle;
+  }
+
+  ////////// condition for CSM to stop //////////
+  if (CSMstat == LOW) {
+    csmControl = 0;
+  }
+  //  Serial.println(errorAngle);
+  ///////// run the CSM //////////
+  analogWrite(AEnbl, csmControl); Serial.print("sysStat: ");Serial.println(sysStat);
+  delay(10);
+
+  /////// END MOTOR LOOP /////////
+
+
+  ////////// UI LOOP //////////////
 
   if (confirm.uniquePress() && !fuga.isInState(Splash)) {
     switch (Book::pageState) {
@@ -239,7 +449,94 @@ void loop() {
     Page_6.disp_timer_GFX();
    }
  }
+
+ ///////// END UI LOOP /////////////
+
 }
 
+float calcAngle(volatile signed long Rotor) {
+  float Turns;
+  float Turnsangle;
+  Turns = (Rotor)/297.92/3.5/(56/12);
+  Turnsangle = Turns * 2 * pi;
 
+  if (Turnsangle >= 2*pi) {
+    Turnsangle = Turnsangle - 2 * pi;
+  }
+
+  return Turnsangle;
+}
+
+void LArun() {
+  double rev = cycle_num * distPerml * maxml / pitch;
+
+  if ( rev >= distPerml * maxml / pitch ) {
+    rev = revSign*distPerml*maxml/pitch;
+    if (rev < 0) {
+      cycle_num--;
+      if (cycle_num == 0) {
+        sysStat = 2;
+      }
+    }
+  } else {
+    rev = revSign * cycle_num * distPerml * maxml / pitch;
+    if (rev < 0) {
+      cycle_num = 0;
+      sysStat = 2;
+    }
+  }
+
+  if (revSign > 0) {
+    Serial.println("Status: drawing...");
+  } else {
+    Serial.println("Status: draining...");
+  }
+
+  revSign = -revSign;
+  rotateDeg(rev*360, rpm);
+}
+
+void rotateDeg(float deg, float speed) {
+  float speed1 = ((speed / 60) * microsteps * 200); // step/s ==> 1/speed1 = s/step
+  int dir = (deg > 0) ? HIGH : LOW;
+  digitalWrite(dirPin,dir);
+
+  unsigned int steps = abs(deg) * (microsteps/1.8);
+//  Serial.print("steps: "); Serial.println(steps);
+  float usDelay = (1 / speed1) / 2 * 1000000;
+
+  CSMstat = HIGH;
+
+  for (int i=0; i < steps; i++) {
+//    Serial.print("i: ");Serial.println(i);
+    if (deg < 0){
+      int reachFront = digitalRead(buttonFront);
+      //Serial.println(reachFront);
+      if (sysStat == 0) {
+        if (reachFront == 0) {
+          i = 0;
+        }
+      }
+      if (reachFront) {
+        break;
+      }
+    }
+
+    if (deg > 0){
+      int reachBack = digitalRead(buttonBack);
+      if (reachBack) {
+        digitalWrite(Sleep, LOW);
+        CSMstat = LOW;
+        break;
+      }
+    }
+
+    digitalWrite(stepPin, HIGH);
+    delayMicroseconds(usDelay);
+    digitalWrite(stepPin, LOW);
+    delayMicroseconds(usDelay);
+
+  }
+  LAstat = LOW;
+}
 
